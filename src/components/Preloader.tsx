@@ -88,8 +88,9 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
         })
       })
 
-      // Кадр 03: пока сайт грузится, буквы уезжают вверх, снизу приезжают такие же.
-      while (!loaded && !cancelled) {
+      // Кадр 03: буквы уезжают вверх, снизу приезжают такие же. Минимум один
+      // раз всегда, дальше — пока сайт грузится.
+      do {
         await play((tl) => {
           const size = em()
           tl.set(back, { y: IN_EM * size })
@@ -115,12 +116,15 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
           )
         })
         ;[front, back] = [back, front]
-      }
+      } while (!loaded && !cancelled)
       if (cancelled) return
 
       // Кадр 04 → 05: маска снимается, слово едет точно на место Hero-snapa.
+      // Запасные буквы ждут под маской — прячем, иначе без маски они видны
+      // второй надписью под словом.
       const target = targetRef.current
       await play((tl) => {
+        tl.set(back, { visibility: 'hidden' })
         tl.set(mask, { overflow: 'visible' })
         if (target) {
           const from = row.getBoundingClientRect()
