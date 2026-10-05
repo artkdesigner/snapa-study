@@ -5,12 +5,13 @@ import { addLinesReveal, visibleTexts } from './linesReveal'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Точка запуска: верх первого текста дошёл до 85% высоты экрана.
-const START = 'top 85%'
+// Точка запуска: верх секции дошёл до середины экрана — для секции высотой
+// в экран это значит, что она наехала на предыдущую наполовину.
+const START = 'top 50%'
 
 /*
   Строки всех [data-reveal-lines] внутри секции выезжают снизу из-под масок,
-  когда секцию доскроллили до START, и уезжают обратно, когда скроллят назад
+  когда верх секции доскроллили до START, и уезжают обратно, когда скроллят назад
   выше неё. На строки тексты делятся только на время анимации — по раскладке
   текущей ширины, в покое это обычный текст (ресайз переносы не ломает).
 */
@@ -63,7 +64,7 @@ export function useScrollLinesReveal(rootRef: RefObject<HTMLElement | null>) {
     ctx.add(() => {
       gsap.set(texts, { autoAlpha: 0 })
       ScrollTrigger.create({
-        trigger: texts[0],
+        trigger: root,
         start: START,
         onEnter: show,
         onLeaveBack: hide,
