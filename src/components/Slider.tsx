@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useScrollSlides } from '../lib/useScrollSlides'
+import { useScrollItemsReveal } from '../lib/useScrollItemsReveal'
 import slide1 from '../assets/slider-1.webp'
 import slide2 from '../assets/slider-2.webp'
 import slide3 from '../assets/slider-3.webp'
@@ -13,6 +14,9 @@ import slide4Full from '../assets/slider-4-full.webp'
   в рамке, остальные ждут под ней (сдвинуты на 100% вниз, обрезаны рамкой);
   текущий пункт списка яркий, остальные — 40%. Стартовое состояние — первый
   слайд; смена по скроллу с пином — src/lib/useScrollSlides.ts.
+  Заголовок и пункты списка по очереди появляются, когда секция видна на 70%
+  (src/lib/useScrollItemsReveal.ts). Линия пункта — на кнопке, а не на li:
+  появление анимирует кнопку (opacity li занят яркостью активного/hover).
   Mobile/Tablet: картинка сверху занимает всё свободное место, список снизу.
   Desktop: две равные колонки, список прижат к низу правой.
   Картинки: на Desktop у слайдов 2–4 свой кадр из Figma (вырезан из
@@ -48,6 +52,7 @@ const SLIDES = [
 function Slider() {
   const rootRef = useRef<HTMLElement>(null)
   useScrollSlides(rootRef)
+  useScrollItemsReveal(rootRef)
 
   return (
     // Высота — по экрану на слайд: столько прокрутки уходит на смену слайдов,
@@ -82,6 +87,7 @@ function Slider() {
         <div className="Slider-right flex flex-col gap-2.5 lg:flex-1 lg:justify-end lg:gap-3.75">
           <h2
             id="slider-title"
+            data-reveal-item
             className="Slider-title text-lead-sm text-accent/40 lg:text-lead-lg"
           >
             Characteristics
@@ -93,12 +99,13 @@ function Slider() {
                 aria-current={i === 0 ? 'true' : undefined}
                 // 40% → hover 75% → активный (aria-current) 100%; переход как
                 // у Button — 300ms Figma Ease out
-                className="Slider-list-item border-b border-accent text-heading-sm opacity-40 transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] not-aria-[current=true]:hover:opacity-75 aria-[current=true]:opacity-100 md:text-heading-md lg:text-heading-lg"
+                className="Slider-list-item text-heading-sm opacity-40 transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] not-aria-[current=true]:hover:opacity-75 aria-[current=true]:opacity-100 md:text-heading-md lg:text-heading-lg"
               >
                 {/* клик — перелистнуть на этот слайд (useScrollSlides) */}
                 <button
                   type="button"
-                  className="Slider-list-button flex w-full cursor-pointer items-center gap-10 py-5 text-left md:items-start lg:py-10"
+                  data-reveal-item
+                  className="Slider-list-button flex w-full border-b border-accent cursor-pointer items-center gap-10 py-5 text-left md:items-start lg:py-10"
                 >
                   <span className="Slider-list-number shrink-0">
                     {String(i + 1).padStart(2, '0')}.
