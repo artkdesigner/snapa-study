@@ -15,8 +15,8 @@ const OUT_EM = 0.9394
 
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
 const START_DELAY = 0.3 // кадр 01: пустой тёмный экран
-const LETTER_DURATION = 0.8
-const LETTER_STAGGER = 0.08
+const LETTER_DURATION = 1.6
+const LETTER_STAGGER = 0.16
 const LETTER_EASE = 'expo.out'
 const MOVE_DURATION = 1 // кадр 04 → 05: переезд на место Hero-snapa
 const MOVE_EASE = 'expo.inOut'
