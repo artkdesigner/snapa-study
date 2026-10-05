@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
 import Preloader from '../components/Preloader'
+import Slider from '../components/Slider'
 import type { HeroReveal } from '../lib/useHeroReveal'
 import { useCoverOverlay } from '../lib/useCoverOverlay'
 
@@ -30,6 +31,7 @@ function Home() {
           <Hero titleRef={heroTitleRef} reveal={heroReveal} />
           <Intro />
         </div>
+        <Slider />
       </main>
     </>
   )
