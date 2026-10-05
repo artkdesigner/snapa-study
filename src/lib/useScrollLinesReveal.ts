@@ -10,7 +10,8 @@ gsap.registerPlugin(ScrollTrigger)
 const START = 'top 50%'
 
 /*
-  Строки всех [data-reveal-lines] внутри секции выезжают снизу из-под масок,
+  Строки всех [data-reveal-lines] внутри секции выезжают снизу из-под масок
+  (блоки по порядку в разметке: следующий — после окончания предыдущего),
   когда верх секции доскроллили до START, и уезжают обратно, когда скроллят назад
   выше неё. На строки тексты делятся только на время анимации — по раскладке
   текущей ширины, в покое это обычный текст (ресайз переносы не ломает).
@@ -43,7 +44,9 @@ export function useScrollLinesReveal(rootRef: RefObject<HTMLElement | null>) {
           finish()
         },
       })
-      revertLines = addLinesReveal(timeline, visibleTexts(texts), 0)
+      revertLines = addLinesReveal(timeline, visibleTexts(texts), 0, {
+        sequence: true,
+      })
       return timeline
     }
 

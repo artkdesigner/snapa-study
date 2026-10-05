@@ -11,14 +11,16 @@ const MASK_BLEED_EM = 0.2
 
 /*
   Делит тексты на строки и добавляет в таймлайн их выезд снизу из-под масок:
-  все блоки стартуют одновременно с `position`, строки внутри блока — по
-  очереди. Возвращает функцию, которая возвращает исходную разметку
-  (вызывать по окончании анимации и при размонтировании).
+  строки внутри блока идут по очереди, а сами блоки стартуют одновременно с
+  `position` или, при `sequence`, друг за другом — следующий сразу после
+  окончания предыдущего. Возвращает функцию, которая возвращает исходную
+  разметку (вызывать по окончании анимации и при размонтировании).
 */
 export function addLinesReveal(
   tl: gsap.core.Timeline,
   texts: HTMLElement[],
   position: gsap.Position,
+  { sequence = false }: { sequence?: boolean } = {},
 ): () => void {
   const splits = texts.map((el) => splitLines(el))
 
@@ -38,7 +40,8 @@ export function addLinesReveal(
         ease: LINE_EASE,
         stagger: LINE_STAGGER,
       },
-      position,
+      // '>' — конец предыдущего добавленного в таймлайн блока
+      i > 0 && sequence ? '>' : position,
     )
   })
 
