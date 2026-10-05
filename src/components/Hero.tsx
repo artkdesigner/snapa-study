@@ -2,6 +2,7 @@ import heroDesktop from '../assets/hero-desktop.webp'
 import heroTablet from '../assets/hero-tablet.webp'
 import heroMobile from '../assets/hero-mobile.webp'
 import logo from '../assets/logo.svg'
+import type { Ref } from 'react'
 import Button from './Button'
 
 /*
@@ -10,7 +11,12 @@ import Button from './Button'
   - Desktop: Snapa слева и шапка в правой колонке (726px) в первой строке,
     нижний блок на всю ширину в последней.
 */
-function Hero() {
+type HeroProps = {
+  // h1 — цель, на которую прелоудер приводит вордмарк
+  titleRef?: Ref<HTMLHeadingElement>
+}
+
+function Hero({ titleRef }: HeroProps) {
   return (
     <section className="Hero relative isolate grid min-h-svh grid-rows-[auto_1fr_auto_auto] bg-dark px-2.5 pt-2.5 pb-5 text-primary md:px-5 md:pt-5 lg:grid-cols-[1fr_45.375rem] lg:grid-rows-[auto_1fr_auto] lg:p-7.5">
       <picture className="Hero-bg absolute inset-0 -z-10">
@@ -39,7 +45,10 @@ function Hero() {
         <Button>Order</Button>
       </header>
 
-      <h1 className="Hero-snapa trim-cap row-start-3 text-display-sm whitespace-nowrap md:text-display-md lg:col-start-1 lg:row-start-1 lg:self-start lg:text-display-lg">
+      <h1
+        ref={titleRef}
+        className="Hero-snapa trim-cap row-start-3 text-display-sm whitespace-nowrap md:text-display-md lg:col-start-1 lg:row-start-1 lg:self-start lg:text-display-lg"
+      >
         Snapa
       </h1>
 

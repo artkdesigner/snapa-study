@@ -77,6 +77,8 @@ html {
 
 body {
   margin: 0;
+  /* тёмный с первого кадра — без белой вспышки до старта прелоудера */
+  background-color: var(--color-dark);
   font-family: var(--font-sans);
   font-weight: 500;
 }
