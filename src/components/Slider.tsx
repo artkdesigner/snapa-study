@@ -53,6 +53,11 @@ const SLIDES = [
   },
 ]
 
+// Запас прокрутки после последнего слайда — успеть его рассмотреть, пока
+// не начал наезжать Mask.
+const HOLD_SVH = 50
+const SECTION_SVH = SLIDES.length * 100 + HOLD_SVH
+
 function Slider() {
   const rootRef = useRef<HTMLElement>(null)
   useScrollSlides(rootRef)
@@ -61,7 +66,8 @@ function Slider() {
 
   return (
     // Высота — по экрану на слайд: столько прокрутки уходит на смену слайдов,
-    // пока Slider-pin прилип к верху (src/lib/useScrollSlides.ts).
+    // пока Slider-pin прилип к верху (src/lib/useScrollSlides.ts), плюс
+    // HOLD_SVH запаса на последнем слайде перед наездом Mask.
     // Сама секция тоже sticky, с top = экран минус её высота: прилипает,
     // когда последний экран (Slider-pin на последнем слайде) дошёл до низа,
     // и стоит, пока на неё наезжает Mask.
@@ -69,8 +75,8 @@ function Slider() {
       ref={rootRef}
       aria-labelledby="slider-title"
       style={{
-        height: `${SLIDES.length * 100}svh`,
-        top: `${(1 - SLIDES.length) * 100}svh`,
+        height: `${SECTION_SVH}svh`,
+        top: `${100 - SECTION_SVH}svh`,
       }}
       className="Slider sticky z-20 bg-bg-primary text-accent"
     >

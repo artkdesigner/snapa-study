@@ -11,9 +11,10 @@ const IMAGE_DURATION = 1
 const IMAGE_EASE = 'expo.inOut'
 
 /*
-  Секция высотой в N экранов, внутри прилипает (sticky) блок на экран.
-  Прогресс прокрутки секции делится на N слайдов: слайд меняется на 0.5, 1.5,
-  2.5… экранах прокрутки. Смена — анимацией по времени, не скрабом: старая
+  Секция высотой в N экранов (+ запас в конце), внутри прилипает (sticky)
+  .Slider-pin на экран. Первые N−1 экранов прокрутки делятся на N слайдов:
+  слайд меняется на 0.5, 1.5, 2.5… экранах; запас после них — последний
+  слайд просто стоит. Смена — анимацией по времени, не скрабом: старая
   картинка уезжает вверх, новая приезжает снизу (при скролле назад —
   наоборот), активному пункту списка ставится aria-current — его яркость
   (и hover остальных) задаёт CSS в Slider.tsx, не GSAP: инлайновый opacity
@@ -27,8 +28,9 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
     if (!root) return
     const images = gsap.utils.toArray<HTMLImageElement>('.Slider-img', root)
     const items = gsap.utils.toArray<HTMLElement>('.Slider-list-item', root)
+    const pin = root.querySelector<HTMLElement>('.Slider-pin')
     const count = images.length
-    if (count < 2) return
+    if (!pin || count < 2) return
 
     const reduced = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
@@ -87,7 +89,9 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       const slides = ScrollTrigger.create({
         // по потоку: секция прилипает в конце (sticky), прилипший rect врёт
         start: () => flowTop(root),
-        end: () => flowTop(root) + root.offsetHeight - window.innerHeight,
+        // смены — на первых N−1 экранах (высота Slider-pin), запас секции
+        // после них в прогресс не входит
+        end: () => flowTop(root) + (count - 1) * pin.offsetHeight,
         onUpdate: (self) => {
           const next = Math.round(self.progress * (count - 1))
           // ctx.add — чтобы твины из колбэка тоже откатились в cleanup
