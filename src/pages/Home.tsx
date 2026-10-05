@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import Hero from '../components/Hero'
+import Intro from '../components/Intro'
 import Preloader from '../components/Preloader'
 import type { HeroReveal } from '../lib/useHeroReveal'
 
@@ -21,6 +22,7 @@ function Home() {
       )}
       <main>
         <Hero titleRef={heroTitleRef} reveal={heroReveal} />
+        <Intro />
       </main>
     </>
   )

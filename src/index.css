@@ -22,6 +22,10 @@
   --color-primary: #fffdff;
   /* Text/Dark 100% */
   --color-dark: #010d18;
+  /* Accent 100% */
+  --color-accent: #de2900;
+  /* BG / Primary */
+  --color-bg-primary: #faf3ef;
 
   /* Body/14 — одинаковый на всех брейкпоинтах */
   --text-body: 0.875rem;
@@ -38,6 +42,25 @@
   --text-title-lg: 3rem;
   --text-title-lg--line-height: 1;
   --text-title-lg--letter-spacing: -0.05em;
+
+  /* Body/16: Mobile и Tablet 14 / 1.3, Desktop 16 / 1.1 */
+  --text-lead-sm: 0.875rem;
+  --text-lead-sm--line-height: 1.3;
+  --text-lead-sm--letter-spacing: -0.04em;
+  --text-lead-lg: 1rem;
+  --text-lead-lg--line-height: 1.1;
+  --text-lead-lg--letter-spacing: -0.04em;
+
+  /* Title/88: Mobile 34 / Tablet 54 / Desktop 88 */
+  --text-headline-sm: 2.125rem;
+  --text-headline-sm--line-height: 1;
+  --text-headline-sm--letter-spacing: -0.07em;
+  --text-headline-md: 3.375rem;
+  --text-headline-md--line-height: 1.1;
+  --text-headline-md--letter-spacing: -0.07em;
+  --text-headline-lg: 5.5rem;
+  --text-headline-lg--line-height: 1;
+  --text-headline-lg--letter-spacing: -0.07em;
 
   /* Snapa (вордмарк): Mobile 100 / Tablet 160 / Desktop 330. Без
      letter-spacing — буквы сближаются отступами (src/lib/wordmark.ts) */
