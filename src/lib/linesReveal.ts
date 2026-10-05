@@ -50,7 +50,8 @@ export function hideLinesNow(blocks: LineBlock[]) {
 /*
   Выезд строк снизу из-под масок (с текущего положения): строки внутри блока
   по очереди, блоки стартуют одновременно с `position` или, при `sequence`,
-  друг за другом — следующий сразу после окончания предыдущего.
+  одной общей очередью — первая строка следующего блока идёт через тот же
+  шаг stagger после последней строки предыдущего.
 */
 export function addLinesIn(
   tl: gsap.core.Timeline,
@@ -59,8 +60,11 @@ export function addLinesIn(
   { sequence = false }: { sequence?: boolean } = {},
 ) {
   blocks.forEach(({ lines }, i) => {
-    // '>' — конец предыдущего добавленного в таймлайн блока
-    const at = i > 0 && sequence ? '>' : position
+    // '<+=…' — от старта предыдущего блока, через все его строки
+    const at =
+      i > 0 && sequence
+        ? `<+=${blocks[i - 1].lines.length * LINE_TWEEN.stagger}`
+        : position
     tl.to(lines, { yPercent: 0, y: 0, ...LINE_TWEEN }, at)
   })
 }
