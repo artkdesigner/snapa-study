@@ -5,13 +5,15 @@ import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
 /*
   Раскадровка «Preloader to Hero 01–05» (desktop 1920, шрифт 330px). Геометрия
   в em от размера вордмарка, поэтому на Tablet/Mobile масштабируется сама:
-  - маска 290px = 0.8788em, верх маски на 7px (0.0212em) выше верха заглавных;
+  - верх маски на 7px (0.0212em) выше верха заглавных;
+  - высота маски 0.95em (в макете 290px = 0.8788em, но так резался хвост «p»
+    — он 0.193em под базовой линией; теперь низ маски на 0.21em под ней);
   - в покое (кадр 04) заглавные отцентрированы по вертикали экрана;
-  - буква стартует на 300px ниже покоя (0.9091em) — целиком под маской;
-  - уходит на 310px вверх (0.9394em) — с запасом на хвост «p» (0.193em).
+  - буква стартует на 0.95em ниже покоя — целиком под маской;
+  - уходит на 0.95em вверх — вместе с хвостом «p».
 */
-const IN_EM = 0.9091
-const OUT_EM = 0.9394
+const IN_EM = 0.95
+const OUT_EM = 0.95
 
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
 const START_DELAY = 0.3 // кадр 01: пустой тёмный экран
@@ -158,7 +160,7 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
     >
       <div
         ref={maskRef}
-        className="Preloader-mask absolute top-1/2 left-2.5 -mt-[0.3803em] h-[0.8788em] overflow-hidden pt-[0.0212em] text-display-sm md:left-5 md:text-display-md lg:left-7.5 lg:text-display-lg"
+        className="Preloader-mask absolute top-1/2 left-2.5 -mt-[0.3803em] h-[0.95em] overflow-hidden pt-[0.0212em] text-display-sm md:left-5 md:text-display-md lg:left-7.5 lg:text-display-lg"
       >
         <div
           ref={rowRef}
