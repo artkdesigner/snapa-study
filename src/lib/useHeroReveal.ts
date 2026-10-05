@@ -13,7 +13,7 @@ export type HeroReveal = 'hidden' | 'play' | 'static'
 
 // Тайминги — в макете не заданы, подобраны; крутить здесь (строки — в
 // linesReveal.ts).
-const FADE_DURATION = 0.6
+const FADE_DURATION = 1.2
 const FADE_EASE = 'power2.out'
 
 export function useHeroReveal(
