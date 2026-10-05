@@ -9,13 +9,16 @@ gsap.registerPlugin(ScrollTrigger)
 const DURATION = 0.5 // на один элемент
 const EASE = 'power2.out'
 const DISTANCE_REM = 1.5 // slide-up снизу
+// Следующий стартует, когда предыдущий прошёл эту долю своей длительности.
+const OVERLAP_AT = '<50%'
 // Точка запуска: верх секции дошёл до 30% высоты экрана — секция видна на
 // 70% экрана.
 const START_VIEWPORT = 0.3
 
 /*
   Элементы [data-reveal-item] внутри секции по очереди появляются (opacity +
-  slide-up): следующий стартует ровно когда закончил предыдущий, без паузы.
+  slide-up): следующий стартует, когда предыдущий прошёл половину своей
+  анимации (OVERLAP_AT).
   При скролле назад выше точки запуска все сразу и одновременно уходят
   обратно; смена направления на ходу подхватывает их с текущего места.
 */
@@ -43,15 +46,19 @@ export function useScrollItemsReveal(rootRef: RefObject<HTMLElement | null>) {
       ctx.add(() => {
         tl?.kill()
         tl = gsap.timeline()
-        // без position — каждый твин встаёт в конец предыдущего
-        items.forEach((item) =>
-          tl!.to(item, {
-            autoAlpha: 1,
-            y: 0,
-            duration: DURATION,
-            ease: EASE,
-            overwrite: true,
-          }),
+        items.forEach((item, i) =>
+          tl!.to(
+            item,
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: DURATION,
+              ease: EASE,
+              overwrite: true,
+            },
+            // '<50%' — от старта предыдущего твина + 50% его длительности
+            i === 0 ? 0 : OVERLAP_AT,
+          ),
         )
       })
     const hide = () =>
