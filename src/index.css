@@ -104,6 +104,15 @@ body {
   font-weight: 500;
 }
 
+/* Скроллбар скрыт на всём сайте, прокрутка (колесо, тач, клавиши) работает.
+   scrollbar-width — Firefox и Chrome 121+, ::-webkit-scrollbar — Safari. */
+* {
+  scrollbar-width: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+
 /*
   Обрезка строки по высоте заглавных (как text-box-trim в Figma). Там, где
   `text-box` не поддерживается (Firefox), — те же отступы по метрикам General
