@@ -4,6 +4,7 @@ import Intro from '../components/Intro'
 import Preloader from '../components/Preloader'
 import Slider from '../components/Slider'
 import type { HeroReveal } from '../lib/useHeroReveal'
+import { useSmoothScroll } from '../lib/useSmoothScroll'
 
 const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -15,6 +16,8 @@ function Home() {
     prefersReducedMotion() ? 'static' : 'hidden',
   )
   const handlePreloaderDone = useCallback(() => setHeroReveal('play'), [])
+  // Плавный скролл; пока идёт прелоудер — прокрутка стоит.
+  useSmoothScroll(heroReveal === 'hidden')
 
   return (
     <>

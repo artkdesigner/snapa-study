@@ -1,6 +1,7 @@
 import { useLayoutEffect, type RefObject } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { scrollPage } from './useSmoothScroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -99,9 +100,8 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       // мелькания промежуточных.
       scrollToSlide = (index) => {
         const { start, end } = slides
-        window.scrollTo({
-          top: start + ((end - start) * index) / (count - 1),
-          behavior: 'instant',
+        scrollPage(start + ((end - start) * index) / (count - 1), {
+          immediate: true,
         })
       }
 
