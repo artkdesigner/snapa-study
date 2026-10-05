@@ -42,6 +42,8 @@ export function useHeroReveal(
       const blocks = q('.Hero-title, .Hero-sub-wrap')
 
       gsap.set([logo, button, blocks], { autoAlpha: 0 })
+      // CSS-переход opacity у Button (hover) сглаживал бы каждый кадр GSAP.
+      gsap.set(button, { transition: 'none' })
       if (reveal !== 'play') return
 
       // Делим на строки только сейчас: шрифт уже загружен прелоудером, и
@@ -57,7 +59,7 @@ export function useHeroReveal(
       const shown = { autoAlpha: 1, clearProps: 'opacity,visibility' }
       const fade = { ...shown, duration: FADE_DURATION, ease: FADE_EASE }
       tl.to(logo, fade)
-      tl.to(button, fade)
+      tl.to(button, { ...fade, clearProps: 'opacity,visibility,transition' })
       tl.set(blocks, shown)
       tl.addLabel('lines')
 
