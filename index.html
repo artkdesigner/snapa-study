@@ -11,6 +11,14 @@
       name="description"
       content="Snapa is a modern instant camera with clean design, a high-quality display, large-format prints and creative presets."
     />
+    <meta name="theme-color" content="#010d18" />
+    <!-- Фон прелоудера (--color-dark) с первого кадра: index.css приходит
+         позже (в dev — только после запуска JS), без этого мелькает белый. -->
+    <style>
+      html {
+        background-color: #010d18;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
