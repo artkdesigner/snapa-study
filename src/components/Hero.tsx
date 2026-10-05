@@ -35,6 +35,7 @@ function Hero({ titleRef, reveal = 'static' }: HeroProps) {
           src={heroMobile}
           alt="Snapa instant camera resting on rocks in a beam of warm light"
           fetchPriority="high"
+          draggable={false}
           className="block size-full object-cover"
         />
       </picture>
@@ -43,11 +44,13 @@ function Hero({ titleRef, reveal = 'static' }: HeroProps) {
         <a
           href={import.meta.env.BASE_URL}
           className="Hero-logo block"
+          draggable={false}
           aria-label="Snapa — home"
         >
           <img
             src={logo}
             alt=""
+            draggable={false}
             className="block h-[1.9375rem] w-[2.5625rem]"
           />
         </a>
