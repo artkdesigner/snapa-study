@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
+import Mask from '../components/Mask'
 import Preloader from '../components/Preloader'
 import Slider from '../components/Slider'
 import type { HeroReveal } from '../lib/useHeroReveal'
@@ -34,6 +35,7 @@ function Home() {
           <Intro />
           <Slider />
         </div>
+        <Mask />
       </main>
     </>
   )

@@ -73,6 +73,22 @@
   --text-headline-lg--line-height: 1;
   --text-headline-lg--letter-spacing: -0.07em;
 
+  /* Title/190: Mobile 48 / Tablet 84 / Desktop 190 */
+  --text-poster-sm: 3rem;
+  --text-poster-sm--line-height: 1;
+  --text-poster-sm--letter-spacing: -0.08em;
+  --text-poster-md: 5.25rem;
+  --text-poster-md--line-height: 1;
+  --text-poster-md--letter-spacing: -0.08em;
+  --text-poster-lg: 11.875rem;
+  --text-poster-lg--line-height: 0.9;
+  --text-poster-lg--letter-spacing: -0.1em;
+
+  /* Body/20 — только Desktop */
+  --text-body-lg: 1.25rem;
+  --text-body-lg--line-height: 1.3;
+  --text-body-lg--letter-spacing: -0.02em;
+
   /* Snapa (вордмарк): Mobile 100 / Tablet 160 / Desktop 330. Без
      letter-spacing — буквы сближаются отступами (src/lib/wordmark.ts) */
   --text-display-sm: 6.25rem;
