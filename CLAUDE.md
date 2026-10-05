@@ -102,8 +102,17 @@ snapa-study/
   .mcp.json       подключение к Figma MCP
 ```
 
-`vite.config.ts` → `base: '/snapa-study/'` — под GitHub Pages
-(`artkdesigner.github.io/snapa-study/`); если хостинг поменяется — поправить.
+## Просмотр и деплой
+
+- Основной просмотр вёрстки — localhost: `npm run dev` → `http://localhost:5173/`
+  (на сервере — `npm run dev -- --host`, порт пробросить по SSH).
+- Репозиторий: `github.com/artkdesigner/snapa-study`, ветка `main`. Каждый пуш в
+  `main` собирает и выкладывает сайт на GitHub Pages
+  (`.github/workflows/deploy.yml`) → `https://artkdesigner.github.io/snapa-study/`.
+- `vite.config.ts`: `base` = `/` в dev и `/snapa-study/` только в прод-сборке —
+  поэтому пути к ассетам в коде писать через импорт или `import.meta.env.BASE_URL`,
+  не абсолютными `/...`, иначе на Pages они сломаются.
+- После пуша проверять, что деплой реально прошёл: `gh run list -L 3`.
 
 ## Безопасность, ревью и эксплуатация
 
