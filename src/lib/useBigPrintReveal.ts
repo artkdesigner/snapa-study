@@ -8,8 +8,13 @@ gsap.registerPlugin(ScrollTrigger)
 
 // Прокрутка под анимацию, пока BigPrint-pin прилип. Высота секции в
 // BigPrint.tsx = экран + этот запас. Все позиции и длительности ниже — тоже
-// в svh прокрутки: таймлайн длиной ANIM_SVH растянут ровно на запас.
+// в svh прокрутки: таймлайн длиной ANIM_SVH идёт ровно столько прокрутки.
 export const BIGPRINT_ANIM_SVH = 200
+
+// Старт: верх секции дошёл до 30% высоты экрана — секция наехала на 70%.
+// Конец — через BIGPRINT_ANIM_SVH, то есть на столько же раньше конца
+// секции: остаток прокрутки собранная секция просто стоит.
+const START_VIEWPORT = 0.3
 
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
 // Буквы заголовка — как Snapa в прелоудере: по очереди из-под маски, expo.out.
@@ -31,8 +36,8 @@ const LINE_STEP_SVH = 8
 
 /*
   Появление BigPrint-left по скроллу. Пока секция наезжает, видна только
-  картинка. Когда BigPrint-pin прилип, на следующих BIGPRINT_ANIM_SVH
-  прокрутки по очереди: буквы заголовка → элементы BigPrint-middle → строки
+  картинка. Когда секция наехала на 70% экрана (START_VIEWPORT), на
+  следующих BIGPRINT_ANIM_SVH прокрутки по очереди: буквы заголовка → элементы BigPrint-middle → строки
   BigPrint-text. Привязано к скроллу (scrub), назад откатывается само.
   Текст поделен на строки всё время (скраб может остановиться на любом
   месте) — по раскладке текущей ширины, при смене ширины делится заново.
@@ -81,9 +86,11 @@ export function useBigPrintReveal(rootRef: RefObject<HTMLElement | null>) {
 
         const tl = gsap.timeline({
           scrollTrigger: {
-            // от прилипания пина до конца секции; по потоку — как у соседей
-            start: () => flowTop(root),
-            end: () => flowTop(root) + root.offsetHeight - pin.offsetHeight,
+            // по потоку — как у соседей; экран = высота пина (svh)
+            start: () => flowTop(root) - pin.offsetHeight * START_VIEWPORT,
+            end: () =>
+              flowTop(root) +
+              pin.offsetHeight * (BIGPRINT_ANIM_SVH / 100 - START_VIEWPORT),
             scrub: true,
           },
         })
