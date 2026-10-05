@@ -17,6 +17,7 @@ const DIM_OPACITY = 0.4 // неактивный пункт списка (в Figm
   2.5… экранах прокрутки. Смена — анимацией по времени, не скрабом: старая
   картинка уезжает вверх, новая приезжает снизу (при скролле назад —
   наоборот), прежний пункт списка гаснет до 40%, новый становится ярким.
+  Клик по .Slider-list-button перелистывает на слайд своего пункта.
   Ожидаются .Slider-img и .Slider-list-item внутри rootRef.
 */
 export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
@@ -37,6 +38,7 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       overwrite: true,
     }
     let current = 0
+    let scrollToSlide = (_index: number) => {}
 
     const goTo = (next: number) => {
       const prev = current
@@ -78,7 +80,7 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       gsap.set(images, { y: 0, yPercent: (i) => (i === 0 ? 0 : 100) })
       gsap.set(items, { opacity: (i) => (i === 0 ? 1 : DIM_OPACITY) })
 
-      ScrollTrigger.create({
+      const slides = ScrollTrigger.create({
         trigger: root,
         start: 'top top',
         end: 'bottom bottom',
@@ -88,6 +90,18 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
           if (next !== current) ctx.add(() => goTo(next))
         },
       })
+
+      // Клик по пункту — прокрутка в точку, где этот слайд активен (середина
+      // его участка). Мгновенно: пока секция прилипла, экран не сдвигается,
+      // а onUpdate сразу переключает на нужный слайд одной сменой, без
+      // мелькания промежуточных.
+      scrollToSlide = (index) => {
+        const { start, end } = slides
+        window.scrollTo({
+          top: start + ((end - start) * index) / (count - 1),
+          behavior: 'instant',
+        })
+      }
 
       // Картинки под рамкой обрезаны overflow, и ленивая загрузка считает их
       // невидимыми — грузим все заранее, за экран до секции.
@@ -99,6 +113,16 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       })
     }, root)
 
-    return () => ctx.revert()
+    const onClick = (event: MouseEvent) => {
+      const button = (event.target as Element).closest('.Slider-list-button')
+      const item = button?.closest<HTMLElement>('.Slider-list-item')
+      if (item) scrollToSlide(items.indexOf(item))
+    }
+    root.addEventListener('click', onClick)
+
+    return () => {
+      root.removeEventListener('click', onClick)
+      ctx.revert()
+    }
   }, [rootRef])
 }

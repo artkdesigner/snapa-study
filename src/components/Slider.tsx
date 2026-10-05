@@ -80,14 +80,20 @@ function Slider() {
               <li
                 key={slide.title}
                 aria-current={i === 0 ? 'true' : undefined}
-                className={`Slider-list-item flex items-center gap-10 border-b border-accent py-5 text-heading-sm md:items-start md:text-heading-md lg:py-10 lg:text-heading-lg ${i === 0 ? '' : 'opacity-40'}`}
+                className={`Slider-list-item border-b border-accent text-heading-sm md:text-heading-md lg:text-heading-lg ${i === 0 ? '' : 'opacity-40'}`}
               >
-                <span className="Slider-list-number shrink-0">
-                  {String(i + 1).padStart(2, '0')}.
-                </span>
-                <span className="Slider-list-title min-w-0 flex-1">
-                  {slide.title}
-                </span>
+                {/* клик — перелистнуть на этот слайд (useScrollSlides) */}
+                <button
+                  type="button"
+                  className="Slider-list-button flex w-full cursor-pointer items-center gap-10 py-5 text-left md:items-start lg:py-10"
+                >
+                  <span className="Slider-list-number shrink-0">
+                    {String(i + 1).padStart(2, '0')}.
+                  </span>
+                  <span className="Slider-list-title min-w-0 flex-1">
+                    {slide.title}
+                  </span>
+                </button>
               </li>
             ))}
           </ol>
