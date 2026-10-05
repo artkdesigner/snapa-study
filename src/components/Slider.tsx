@@ -91,7 +91,9 @@ function Slider() {
               <li
                 key={slide.title}
                 aria-current={i === 0 ? 'true' : undefined}
-                className={`Slider-list-item border-b border-accent text-heading-sm md:text-heading-md lg:text-heading-lg ${i === 0 ? '' : 'opacity-40'}`}
+                // 40% → hover 75% → активный (aria-current) 100%; переход как
+                // у Button — 300ms Figma Ease out
+                className="Slider-list-item border-b border-accent text-heading-sm opacity-40 transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] not-aria-[current=true]:hover:opacity-75 aria-[current=true]:opacity-100 md:text-heading-md lg:text-heading-lg"
               >
                 {/* клик — перелистнуть на этот слайд (useScrollSlides) */}
                 <button

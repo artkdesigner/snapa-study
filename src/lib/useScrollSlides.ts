@@ -7,16 +7,15 @@ gsap.registerPlugin(ScrollTrigger)
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
 const IMAGE_DURATION = 1
 const IMAGE_EASE = 'expo.inOut'
-const ITEM_DURATION = 0.6
-const ITEM_EASE = 'power2.out'
-const DIM_OPACITY = 0.4 // неактивный пункт списка (в Figma — 40%)
 
 /*
   Секция высотой в N экранов, внутри прилипает (sticky) блок на экран.
   Прогресс прокрутки секции делится на N слайдов: слайд меняется на 0.5, 1.5,
   2.5… экранах прокрутки. Смена — анимацией по времени, не скрабом: старая
   картинка уезжает вверх, новая приезжает снизу (при скролле назад —
-  наоборот), прежний пункт списка гаснет до 40%, новый становится ярким.
+  наоборот), активному пункту списка ставится aria-current — его яркость
+  (и hover остальных) задаёт CSS в Slider.tsx, не GSAP: инлайновый opacity
+  перебивал бы hover.
   Клик по .Slider-list-button перелистывает на слайд своего пункта.
   Ожидаются .Slider-img и .Slider-list-item внутри rootRef.
 */
@@ -40,6 +39,16 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
     let current = 0
     let scrollToSlide = (_index: number) => {}
 
+    const markCurrent = (index: number) => {
+      items.forEach((item, i) => {
+        if (i === index) item.setAttribute('aria-current', 'true')
+        else item.removeAttribute('aria-current')
+      })
+      images.forEach((img, i) =>
+        img.setAttribute('aria-hidden', String(i !== index)),
+      )
+    }
+
     const goTo = (next: number) => {
       const prev = current
       current = next
@@ -59,26 +68,14 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
         gsap.set(images[next], { yPercent: 100 * dir })
       gsap.to(images[next], { ...imageTween, yPercent: 0 })
 
-      items.forEach((item, i) => {
-        gsap.to(item, {
-          opacity: i === next ? 1 : DIM_OPACITY,
-          duration: reduced ? 0 : ITEM_DURATION,
-          ease: ITEM_EASE,
-          overwrite: true,
-        })
-        if (i === next) item.setAttribute('aria-current', 'true')
-        else item.removeAttribute('aria-current')
-      })
-      images.forEach((img, i) =>
-        img.setAttribute('aria-hidden', String(i !== next)),
-      )
+      markCurrent(next)
     }
 
     const ctx = gsap.context(() => {
       // Стартовое положение — в yPercent, а не transform из класса (GSAP
       // прочитал бы его как y в px и смешал бы с yPercent).
       gsap.set(images, { y: 0, yPercent: (i) => (i === 0 ? 0 : 100) })
-      gsap.set(items, { opacity: (i) => (i === 0 ? 1 : DIM_OPACITY) })
+      markCurrent(0)
 
       const slides = ScrollTrigger.create({
         trigger: root,
