@@ -5,13 +5,14 @@ import { addLinesReveal, visibleTexts } from './linesReveal'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Когда запускать: верх первого текста дошёл до 85% высоты экрана.
+// Точка запуска: верх первого текста дошёл до 85% высоты экрана.
 const START = 'top 85%'
 
 /*
-  Строки всех [data-reveal-lines] внутри секции один раз выезжают снизу из-под
-  масок, когда секция доскроллена до экрана. До этого тексты спрятаны; на
-  строки они делятся только в момент запуска — по раскладке текущей ширины.
+  Строки всех [data-reveal-lines] внутри секции выезжают снизу из-под масок,
+  когда секцию доскроллили до START, и уезжают обратно, когда скроллят назад
+  выше неё. На строки тексты делятся только на время анимации — по раскладке
+  текущей ширины, в покое это обычный текст (ресайз переносы не ломает).
 */
 export function useScrollLinesReveal(rootRef: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
@@ -19,25 +20,53 @@ export function useScrollLinesReveal(rootRef: RefObject<HTMLElement | null>) {
     if (!root) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+    const texts = gsap.utils.toArray<HTMLElement>('[data-reveal-lines]', root)
+    if (!texts.length) return
+
+    let tl: gsap.core.Timeline | null = null
     let revertLines = () => {}
     const ctx = gsap.context(() => {}, root)
 
-    ctx.add(() => {
-      const texts = gsap.utils.toArray<HTMLElement>('[data-reveal-lines]', root)
-      if (!texts.length) return
-      gsap.set(texts, { autoAlpha: 0 })
+    // Таймлайн живёт только пока идёт анимация в одну из сторон.
+    const finish = () => {
+      revertLines()
+      tl?.kill()
+      tl = null
+    }
+    const build = () => {
+      const timeline = gsap.timeline({
+        paused: true,
+        onComplete: finish,
+        onReverseComplete: () => {
+          gsap.set(texts, { autoAlpha: 0 })
+          finish()
+        },
+      })
+      revertLines = addLinesReveal(timeline, visibleTexts(texts), 0)
+      return timeline
+    }
 
+    // ctx.add — чтобы созданное в колбэках скролла откатилось в cleanup.
+    const show = () =>
+      ctx.add(() => {
+        tl ??= build()
+        gsap.set(texts, { autoAlpha: 1 })
+        tl.play()
+      })
+    const hide = () =>
+      ctx.add(() => {
+        // Текст уже стоит целиком — делим и начинаем с конца анимации.
+        tl ??= build().progress(1, true) // true — без onComplete
+        tl.reverse()
+      })
+
+    ctx.add(() => {
+      gsap.set(texts, { autoAlpha: 0 })
       ScrollTrigger.create({
         trigger: texts[0],
         start: START,
-        once: true,
-        // ctx.add — чтобы таймлайн, созданный позже, тоже откатился в cleanup
-        onEnter: () =>
-          ctx.add(() => {
-            const tl = gsap.timeline({ onComplete: () => revertLines() })
-            tl.set(texts, { autoAlpha: 1, clearProps: 'opacity,visibility' })
-            revertLines = addLinesReveal(tl, visibleTexts(texts), 0)
-          }),
+        onEnter: show,
+        onLeaveBack: hide,
       })
     })
 

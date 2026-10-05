@@ -5,7 +5,8 @@ import { useScrollLinesReveal } from '../lib/useScrollLinesReveal'
   Экран-манифест: заголовок и подпись по центру светлого экрана. В Figma
   колонка центрирована по вертикали во фрейме высотой с вьюпорт, поэтому
   здесь — min-h-svh + flex-центровка, ширины блоков из макета.
-  При доскролле строки обоих текстов выезжают снизу из-под масок.
+  Наезжает поверх прилипшего Hero (relative z-10). При доскролле строки
+  обоих текстов выезжают снизу из-под масок, при скролле назад — уезжают.
 */
 function Intro() {
   const rootRef = useRef<HTMLElement>(null)
@@ -15,7 +16,7 @@ function Intro() {
     <section
       ref={rootRef}
       aria-labelledby="intro-title"
-      className="Intro flex min-h-svh flex-col items-center justify-center gap-6 bg-bg-primary px-2.5 text-center text-accent md:gap-10 md:px-0 lg:gap-15"
+      className="Intro relative z-10 flex min-h-svh flex-col items-center justify-center gap-6 bg-bg-primary px-2.5 text-center text-accent md:gap-10 md:px-0 lg:gap-15"
     >
       <h2
         id="intro-title"

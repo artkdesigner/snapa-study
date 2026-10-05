@@ -12,6 +12,8 @@ import { useHeroReveal, type HeroReveal } from '../lib/useHeroReveal'
   - Mobile/Tablet: шапка → свободное место (1fr) → Snapa → нижний блок.
   - Desktop: Snapa слева и шапка в правой колонке (726px) в первой строке,
     нижний блок на всю ширину в последней.
+  Секция прилипает к верху экрана (sticky), следующая (Intro) наезжает на
+  неё; Hero-overlay затемняет её по мере накрытия (src/lib/useCoverOverlay.ts).
 */
 type HeroProps = {
   // h1 — цель, на которую прелоудер приводит вордмарк
@@ -26,7 +28,7 @@ function Hero({ titleRef, reveal = 'static' }: HeroProps) {
   return (
     <section
       ref={rootRef}
-      className="Hero relative isolate grid min-h-svh grid-rows-[auto_1fr_auto_auto] bg-dark px-2.5 pt-2.5 pb-5 text-primary md:px-5 md:pt-5 lg:grid-cols-[1fr_45.375rem] lg:grid-rows-[auto_1fr_auto] lg:p-7.5"
+      className="Hero sticky top-0 isolate grid min-h-svh grid-rows-[auto_1fr_auto_auto] bg-dark px-2.5 pt-2.5 pb-5 text-primary md:px-5 md:pt-5 lg:grid-cols-[1fr_45.375rem] lg:grid-rows-[auto_1fr_auto] lg:p-7.5"
     >
       <picture className="Hero-bg absolute inset-0 -z-10">
         <source media="(min-width: 62rem)" srcSet={heroDesktop} />
@@ -100,6 +102,11 @@ function Hero({ titleRef, reveal = 'static' }: HeroProps) {
           </p>
         </div>
       </div>
+
+      <div
+        aria-hidden="true"
+        className="Hero-overlay pointer-events-none absolute inset-0 bg-black opacity-0"
+      />
     </section>
   )
 }

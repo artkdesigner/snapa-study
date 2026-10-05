@@ -26,9 +26,11 @@ export function addLinesReveal(
     const bleed =
       parseFloat(getComputedStyle(texts[i]).fontSize) * MASK_BLEED_EM
     gsap.set(split.masks, { paddingBottom: bleed, marginBottom: -bleed })
-    tl.set(split.lines, { yPercent: 100, y: bleed }, 0)
-    tl.to(
+    // fromTo сразу ставит строки вниз (immediateRender) — без кадра с
+    // целым текстом до старта; при откате назад строки остаются внизу.
+    tl.fromTo(
       split.lines,
+      { yPercent: 100, y: bleed },
       {
         yPercent: 0,
         y: 0,
