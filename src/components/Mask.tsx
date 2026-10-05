@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { MASK_LEAD_SCREENS, useMaskSlides } from '../lib/useMaskSlides'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 import mask1Sm from '../assets/mask-1-1920.webp'
 import mask1Md from '../assets/mask-1-2880.webp'
 import mask1Lg from '../assets/mask-1-3840.webp'
@@ -11,8 +12,9 @@ import mask3Md from '../assets/mask-3-2880.webp'
 import mask3Lg from '../assets/mask-3-3840.webp'
 
 /*
-  Детали корпуса: наезжает поверх прилипшего Slider (z-30). 3 полноэкранных
-  слайда лежат стопкой в Mask-pin (в Figma —
+  Детали корпуса: наезжает поверх прилипшего Slider (z-30), в конце сама
+  прилипает, и на неё наезжает BigPrint — Mask-overlay затемняет её
+  (src/lib/useCoverOverlay.ts). 3 полноэкранных слайда лежат стопкой в Mask-pin (в Figma —
   слои Mask-slide друг на друге, сверху Mask-slide.current). Первый слайд —
   сверху, остальные под ним по порядку. Каждый слайд обёрнут в маску
   Mask-group: при скролле маска поворачивается вокруг нижнего левого угла и
@@ -57,19 +59,23 @@ const SLIDES = [
 ]
 
 const WIDTHS = [1920, 2880, 3840]
+const SECTION_SVH = (SLIDES.length + MASK_LEAD_SCREENS) * 100
 
 function Mask() {
   const rootRef = useRef<HTMLElement>(null)
   useMaskSlides(rootRef)
+  useCoverOverlay(rootRef)
 
   return (
     // Высота — по экрану на слайд + запас до первой смены: столько прокрутки
     // Mask-pin стоит прилипшим (src/lib/useMaskSlides.ts).
+    // Сама секция тоже sticky, с top = экран минус её высота: прилипает на
+    // последнем слайде и стоит, пока на неё наезжает BigPrint.
     <section
       ref={rootRef}
       aria-label="Design details"
-      style={{ height: `${(SLIDES.length + MASK_LEAD_SCREENS) * 100}svh` }}
-      className="Mask relative z-30 bg-bg-primary text-primary"
+      style={{ height: `${SECTION_SVH}svh`, top: `${100 - SECTION_SVH}svh` }}
+      className="Mask sticky z-30 bg-bg-primary text-primary"
     >
       <div className="Mask-pin sticky top-0 h-svh overflow-clip [container-type:size]">
         {SLIDES.map((slide, i) => (
@@ -107,6 +113,13 @@ function Mask() {
             </div>
           </div>
         ))}
+
+        {/* поверх стопки слайдов (у них z 1…N) — затемняет видимый экран */}
+        <div
+          aria-hidden="true"
+          data-cover-overlay
+          className="Mask-overlay pointer-events-none absolute inset-0 z-10 bg-black opacity-0"
+        />
       </div>
     </section>
   )

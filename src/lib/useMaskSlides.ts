@@ -1,6 +1,7 @@
 import { useLayoutEffect, type RefObject } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { flowTop } from './flowTop'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -26,7 +27,8 @@ export function useMaskSlides(rootRef: RefObject<HTMLElement | null>) {
     if (!root) return
     const groups = gsap.utils.toArray<HTMLElement>('.Mask-group', root)
     const slides = gsap.utils.toArray<HTMLElement>('.Mask-slide', root)
-    if (groups.length < 2) return
+    const pin = root.querySelector<HTMLElement>('.Mask-pin')
+    if (!pin || groups.length < 2) return
 
     const ctx = gsap.context(() => {
       // Ось поворота — нижний левый угол (у маски и слайда он совпадает).
@@ -35,9 +37,9 @@ export function useMaskSlides(rootRef: RefObject<HTMLElement | null>) {
       const tl = gsap.timeline({
         defaults: { duration: 1, ease: 'none' },
         scrollTrigger: {
-          trigger: root,
-          start: 'top top',
-          end: 'bottom bottom',
+          // по потоку: секция прилипает в конце (sticky), прилипший rect врёт
+          start: () => flowTop(root),
+          end: () => flowTop(root) + root.offsetHeight - pin.offsetHeight,
           scrub: true,
         },
       })

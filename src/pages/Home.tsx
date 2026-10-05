@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import BigPrint from '../components/BigPrint'
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
 import Mask from '../components/Mask'
@@ -26,15 +27,16 @@ function Home() {
         <Preloader targetRef={heroTitleRef} onDone={handlePreloaderDone} />
       )}
       <main>
-        {/* Стопка наездов: Hero, Intro и Slider прилипают (sticky), каждая
-            следующая секция (z выше) наезжает на предыдущую, та затемняется
-            своим оверлеем (useCoverOverlay в Hero, Intro и Slider).
+        {/* Стопка наездов: Hero, Intro, Slider и Mask прилипают (sticky),
+            каждая следующая секция (z выше) наезжает на предыдущую, та
+            затемняется своим оверлеем (useCoverOverlay в каждой из них).
             Прилипание ограничено обёрткой — дальше стопка уезжает целиком. */}
         <div className="Cover-stack">
           <Hero titleRef={heroTitleRef} reveal={heroReveal} />
           <Intro />
           <Slider />
           <Mask />
+          <BigPrint />
         </div>
       </main>
     </>
