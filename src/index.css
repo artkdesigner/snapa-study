@@ -1,13 +1,75 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'General Sans';
+  src: url('./assets/fonts/GeneralSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 /*
-  Токены дизайн-системы из Figma (цвета, шрифты, отступы) добавлять сюда,
-  например:
-  @theme {
-    --color-brand: #...;
-    --font-heading: ...;
-  }
+  Токены из Figma (get_variable_defs). Брейкпоинты совпадают с зонами
+  rem-скейлинга корня ниже: md — Tablet (от 481px), lg — Desktop (от 992px).
 */
+@theme {
+  --breakpoint-md: 30.0625rem;
+  --breakpoint-lg: 62rem;
+
+  --font-sans: 'General Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* Text/Primary 100% (80% и 40% — через модификатор: text-primary/80) */
+  --color-primary: #fffdff;
+  /* Text/Dark 100% */
+  --color-dark: #010d18;
+
+  /* Body/14 — одинаковый на всех брейкпоинтах */
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.1;
+  --text-body--letter-spacing: -0.02em;
+
+  /* Title/48: Mobile 20 / Tablet 24 / Desktop 48 */
+  --text-title-sm: 1.25rem;
+  --text-title-sm--line-height: 1.2;
+  --text-title-sm--letter-spacing: -0.05em;
+  --text-title-md: 1.5rem;
+  --text-title-md--line-height: 1.2;
+  --text-title-md--letter-spacing: -0.05em;
+  --text-title-lg: 3rem;
+  --text-title-lg--line-height: 1;
+  --text-title-lg--letter-spacing: -0.05em;
+
+  /* Snapa (вордмарк): Mobile 100 / Tablet 160 / Desktop 330 */
+  --text-display-sm: 6.25rem;
+  --text-display-sm--line-height: 1;
+  --text-display-sm--letter-spacing: -0.1em;
+  --text-display-md: 10rem;
+  --text-display-md--line-height: 1;
+  --text-display-md--letter-spacing: -0.1em;
+  --text-display-lg: 20.625rem;
+  --text-display-lg--line-height: 1;
+  --text-display-lg--letter-spacing: -0.1em;
+}
+
+/*
+  Флюидность — rem-скейлинг корня: 1rem = 16px ровно на ширине эталонного
+  Figma-фрейма своей зоны, между ними всё масштабируется пропорционально.
+*/
+html {
+  font-size: 0.83333vw; /* 16px при 1920px — Desktop */
+}
+@media screen and (max-width: 61.9375rem) {
+  /* ≤991px — Tablet */
+  html {
+    font-size: 2.08333vw; /* 16px при 768px */
+  }
+}
+@media screen and (max-width: 30rem) {
+  /* ≤480px — Mobile */
+  html {
+    font-size: 4.26667vw; /* 16px при 375px */
+  }
+}
 
 :root {
   color-scheme: light dark;
@@ -15,6 +77,24 @@
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+/*
+  Обрезка строки по высоте заглавных (как text-box-trim в Figma). Там, где
+  `text-box` не поддерживается (Firefox), — те же отступы по метрикам General
+  Sans: ascent 1.01, descent 0.24, cap 0.718 при line-height 1.
+*/
+@layer components {
+  .trim-cap {
+    text-box: trim-both cap alphabetic;
+  }
+  @supports not (text-box: trim-both cap alphabetic) {
+    .trim-cap {
+      margin-block: -0.167em -0.115em;
+    }
+  }
 }
 
 /* Уважать системную настройку «уменьшить движение» — гасит все reveal-переходы
