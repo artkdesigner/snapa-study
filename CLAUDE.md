@@ -104,8 +104,11 @@ snapa-study/
 
 ## Просмотр и деплой
 
-- Основной просмотр вёрстки — localhost: `npm run dev` → `http://localhost:5173/`
-  (на сервере — `npm run dev -- --host`, порт пробросить по SSH).
+- Основной просмотр вёрстки — localhost: `npm run dev` → `http://localhost:5180/`
+  (порт закреплён в `vite.config.ts`, `strictPort`; 5173–5175 заняты другими
+  проектами). Dev-сервер живёт на VPS, пользователь смотрит через SSH-туннель
+  со своей машины:
+  `ssh -N -L 5180:127.0.0.1:5180 -p 2222 root@72.56.97.73`
 - Репозиторий: `github.com/artkdesigner/snapa-study`, ветка `main`. Каждый пуш в
   `main` собирает и выкладывает сайт на GitHub Pages
   (`.github/workflows/deploy.yml`) → `https://artkdesigner.github.io/snapa-study/`.
