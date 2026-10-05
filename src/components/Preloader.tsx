@@ -16,13 +16,26 @@ const IN_EM = 0.95
 const OUT_EM = 0.95
 
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
-const START_DELAY = 0.3 // кадр 01: пустой тёмный экран
+const START_DELAY = 0.1 // кадр 01: пустой тёмный экран
 const LETTER_DURATION = 1.6
 const LETTER_STAGGER = 0.16
 const LETTER_EASE = 'expo.out'
 const MOVE_DURATION = 1 // кадр 04 → 05: переезд на место Hero-snapa
 const MOVE_EASE = 'expo.inOut'
 const FADE_DURATION = 0.6 // исчезновение прелоудера, после него — появление Hero
+// Пауза между фазами: следующая стартует через GAP после того, как предыдущая
+// визуально закончилась — кривая прошла SETTLE пути. Формального конца не
+// ждём: у expo.out последняя треть длительности — почти неподвижный хвост.
+const GAP = 0.1
+const SETTLE = 0.99
+
+// Когда твин с такой кривой и длительностью визуально доехал.
+function settleTime(ease: string, duration: number) {
+  const curve = gsap.parseEase(ease)
+  let t = 0
+  while (t < 1 && curve(t) < SETTLE) t += 0.005
+  return Math.min(t, 1) * duration
+}
 
 type PreloaderProps = {
   targetRef: RefObject<HTMLElement | null>
@@ -60,17 +73,24 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
     html.style.overflow = 'hidden'
 
     const ctx = gsap.context(() => {})
-    const play = (build: (tl: gsap.core.Timeline) => void) =>
+    // build возвращает момент, когда пора запускать следующую фазу (не
+    // дожидаясь конца таймлайна), или ничего — тогда ждём конца.
+    const play = (build: (tl: gsap.core.Timeline) => number | void) =>
       new Promise<void>((resolve) => {
         ctx.add(() => {
           const tl = gsap.timeline({ onComplete: resolve })
-          build(tl)
+          const next = build(tl)
+          if (next !== undefined) tl.call(resolve, undefined, next)
         })
       })
     const em = () => parseFloat(getComputedStyle(mask).fontSize)
 
     let front = gsap.utils.toArray<HTMLElement>('[data-letter="front"]', row)
     let back = gsap.utils.toArray<HTMLElement>('[data-letter="back"]', row)
+    // Последняя буква визуально доехала — с начала её очереди.
+    const lettersSettled =
+      (front.length - 1) * LETTER_STAGGER +
+      settleTime(LETTER_EASE, LETTER_DURATION)
 
     const run = async () => {
       // Буквы без General Sans выглядят чужими — ждём шрифт до старта.
@@ -88,6 +108,7 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
           stagger: LETTER_STAGGER,
           delay: START_DELAY,
         })
+        return START_DELAY + lettersSettled + GAP
       })
 
       // Кадр 03: буквы уезжают вверх, снизу приезжают такие же. Минимум один
@@ -95,6 +116,10 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
       do {
         await play((tl) => {
           const size = em()
+          // Прошлая фаза ещё дотягивает хвосты: запасные (ушли наверх, за
+          // маской) — останавливаем и ставим вниз; видимые подхватываем с
+          // текущего места (overwrite), без рывка.
+          gsap.killTweensOf(back)
           tl.set(back, { y: IN_EM * size })
           tl.to(
             front,
@@ -103,6 +128,7 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
               duration: LETTER_DURATION,
               ease: LETTER_EASE,
               stagger: LETTER_STAGGER,
+              overwrite: 'auto',
             },
             0,
           )
@@ -116,6 +142,7 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
             },
             0,
           )
+          return lettersSettled + GAP
         })
         ;[front, back] = [back, front]
       } while (!loaded && !cancelled)
@@ -139,7 +166,11 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
           })
         }
         // Слово лежит ровно поверх h1, поэтому гасим прелоудер целиком.
-        tl.to(root, { autoAlpha: 0, duration: FADE_DURATION })
+        tl.to(
+          root,
+          { autoAlpha: 0, duration: FADE_DURATION },
+          target ? settleTime(MOVE_EASE, MOVE_DURATION) + GAP : 0,
+        )
       })
       if (!cancelled) onDone()
     }
