@@ -1,8 +1,6 @@
 import { useLayoutEffect, type RefObject } from 'react'
 import gsap from 'gsap'
-import { SplitText } from 'gsap/SplitText'
-
-gsap.registerPlugin(SplitText)
+import { splitLines, type SplitLinesResult } from './splitLines'
 
 /*
   Появление Hero после прелоудера:
@@ -31,6 +29,12 @@ export function useHeroReveal(
     const root = rootRef.current
     if (!root || reveal === 'static') return
 
+    let splits: SplitLinesResult[] = []
+    const revertSplits = () => {
+      splits.forEach((split) => split.revert())
+      splits = []
+    }
+
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(root)
       const logo = q('.Hero-logo')
@@ -45,13 +49,9 @@ export function useHeroReveal(
       const texts = q('[data-reveal-lines]').filter(
         (el) => el.getClientRects().length > 0,
       )
-      const splits = texts.map((el) =>
-        SplitText.create(el, { type: 'lines', mask: 'lines' }),
-      )
+      splits = texts.map((el) => splitLines(el))
 
-      const tl = gsap.timeline({
-        onComplete: () => splits.forEach((split) => split.revert()),
-      })
+      const tl = gsap.timeline({ onComplete: revertSplits })
       tl.to(logo, { autoAlpha: 1, duration: FADE_DURATION, ease: FADE_EASE })
       tl.to(button, { autoAlpha: 1, duration: FADE_DURATION, ease: FADE_EASE })
       tl.set(blocks, { autoAlpha: 1 })
@@ -76,6 +76,9 @@ export function useHeroReveal(
       })
     }, root)
 
-    return () => ctx.revert()
+    return () => {
+      ctx.revert()
+      revertSplits()
+    }
   }, [rootRef, reveal])
 }
