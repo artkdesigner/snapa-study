@@ -4,6 +4,9 @@ import slide1 from '../assets/slider-1.webp'
 import slide2 from '../assets/slider-2.webp'
 import slide3 from '../assets/slider-3.webp'
 import slide4 from '../assets/slider-4.webp'
+import slide2Full from '../assets/slider-2-full.webp'
+import slide3Full from '../assets/slider-3-full.webp'
+import slide4Full from '../assets/slider-4-full.webp'
 
 /*
   Характеристики: 4 слайда — картинка + пункт списка. Текущая картинка стоит
@@ -12,28 +15,32 @@ import slide4 from '../assets/slider-4.webp'
   слайд; смена по скроллу с пином — src/lib/useScrollSlides.ts.
   Mobile/Tablet: картинка сверху занимает всё свободное место, список снизу.
   Desktop: две равные колонки, список прижат к низу правой.
+  Картинки: на Desktop у слайдов 2–4 свой кадр из Figma (вырезан из
+  исходника — `image`), на Mobile/Tablet — исходник целиком (`imageFull`),
+  везде object-cover по центру.
 */
 const SLIDES = [
   {
     title: '4-Lens Optical System',
     image: slide1,
     alt: 'Close-up of the Snapa zoom lens',
-    // на Mobile в Figma кадр сдвинут вправо от центра
-    position: 'object-[72%_0%] md:object-center',
   },
   {
     title: 'Sonar Autofocus',
     image: slide2,
+    imageFull: slide2Full,
     alt: 'Snapa lens barrel with its focus ring',
   },
   {
     title: 'Powerful Integrated Flash',
     image: slide3,
+    imageFull: slide3Full,
     alt: 'Snapa flash window in warm side light',
   },
   {
     title: 'Large-Format Instant Printing',
     image: slide4,
+    imageFull: slide4Full,
     alt: 'Back of the Snapa camera resting on rocks',
   },
 ]
@@ -56,15 +63,19 @@ function Slider() {
             срабатывает (там картинка ≈ 63% высоты) */}
         <div className="Slider-img-wrap relative min-h-[50svh] flex-1 overflow-clip lg:min-h-0">
           {SLIDES.map((slide, i) => (
-            <img
-              key={slide.title}
-              src={slide.image}
-              alt={slide.alt}
-              aria-hidden={i !== 0}
-              loading="lazy"
-              draggable={false}
-              className={`Slider-img absolute inset-0 block size-full object-cover ${slide.position ?? 'object-center'} ${i === 0 ? '' : '[transform:translateY(100%)]'}`}
-            />
+            <picture key={slide.title}>
+              {slide.imageFull && (
+                <source media="(min-width: 62rem)" srcSet={slide.image} />
+              )}
+              <img
+                src={slide.imageFull ?? slide.image}
+                alt={slide.alt}
+                aria-hidden={i !== 0}
+                loading="lazy"
+                draggable={false}
+                className={`Slider-img absolute inset-0 block size-full object-cover ${i === 0 ? '' : '[transform:translateY(100%)]'}`}
+              />
+            </picture>
           ))}
         </div>
 
