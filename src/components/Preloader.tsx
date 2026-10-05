@@ -1,5 +1,6 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import gsap from 'gsap'
+import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
 
 /*
   Раскадровка «Preloader to Hero 01–05» (desktop 1920, шрифт 330px). Геометрия
@@ -9,7 +10,6 @@ import gsap from 'gsap'
   - буква стартует на 300px ниже покоя (0.9091em) — целиком под маской;
   - уходит на 310px вверх (0.9394em) — с запасом на хвост «p» (0.193em).
 */
-const LETTERS = ['S', 'n', 'a', 'p', 'a']
 const IN_EM = 0.9091
 const OUT_EM = 0.9394
 
@@ -164,8 +164,8 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
           ref={rowRef}
           className="Preloader-snapa invisible flex whitespace-nowrap"
         >
-          {LETTERS.map((letter, i) => (
-            <span key={i} className="relative">
+          {WORDMARK_LETTERS.map((letter, i) => (
+            <span key={i} className={`relative ${WORDMARK_LETTER_CLASS}`}>
               <span data-letter="front" className="trim-cap block">
                 {letter}
               </span>

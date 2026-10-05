@@ -39,16 +39,14 @@
   --text-title-lg--line-height: 1;
   --text-title-lg--letter-spacing: -0.05em;
 
-  /* Snapa (вордмарк): Mobile 100 / Tablet 160 / Desktop 330 */
+  /* Snapa (вордмарк): Mobile 100 / Tablet 160 / Desktop 330. Без
+     letter-spacing — буквы сближаются отступами (src/lib/wordmark.ts) */
   --text-display-sm: 6.25rem;
   --text-display-sm--line-height: 1;
-  --text-display-sm--letter-spacing: -0.1em;
   --text-display-md: 10rem;
   --text-display-md--line-height: 1;
-  --text-display-md--letter-spacing: -0.1em;
   --text-display-lg: 20.625rem;
   --text-display-lg--line-height: 1;
-  --text-display-lg--letter-spacing: -0.1em;
 }
 
 /*

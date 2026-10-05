@@ -4,6 +4,7 @@ import heroMobile from '../assets/hero-mobile.webp'
 import logo from '../assets/logo.svg'
 import type { Ref } from 'react'
 import Button from './Button'
+import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
 
 /*
   Сетка вместо абсолютных координат из Figma:
@@ -49,7 +50,11 @@ function Hero({ titleRef }: HeroProps) {
         ref={titleRef}
         className="Hero-snapa trim-cap row-start-3 text-display-sm whitespace-nowrap md:text-display-md lg:col-start-1 lg:row-start-1 lg:self-start lg:text-display-lg"
       >
-        Snapa
+        {WORDMARK_LETTERS.map((letter, i) => (
+          <span key={i} className={WORDMARK_LETTER_CLASS}>
+            {letter}
+          </span>
+        ))}
       </h1>
 
       <div className="Hero-bottom row-start-4 flex flex-col gap-10 pt-10 lg:col-span-2 lg:row-start-3 lg:flex-row-reverse lg:items-end lg:gap-7.5 lg:pt-0">
