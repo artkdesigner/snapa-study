@@ -2,6 +2,7 @@ import heroDesktop from '../assets/hero-desktop.webp'
 import heroTablet from '../assets/hero-tablet.webp'
 import heroMobile from '../assets/hero-mobile.webp'
 import logo from '../assets/logo.svg'
+import Button from './Button'
 
 /*
   Сетка вместо абсолютных координат из Figma:
@@ -35,12 +36,7 @@ function Hero() {
             className="block h-[1.9375rem] w-[2.5625rem]"
           />
         </a>
-        <button
-          type="button"
-          className="Button flex h-10 items-center rounded-full bg-primary px-5 text-body text-dark lg:h-12.5 lg:px-7.5"
-        >
-          Order
-        </button>
+        <Button>Order</Button>
       </header>
 
       <h1 className="Hero-snapa trim-cap row-start-3 text-display-sm whitespace-nowrap md:text-display-md lg:col-start-1 lg:row-start-1 lg:self-start lg:text-display-lg">
