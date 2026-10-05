@@ -5,8 +5,9 @@ import { addLinesReveal, visibleTexts } from './linesReveal'
 /*
   Появление Hero после прелоудера:
   'hidden' — прелоудер ещё идёт, элементы спрятаны;
-  'play'   — Hero-logo → Button → строки Hero-title / Hero-sub-left /
-             Hero-sub-right одновременно выезжают снизу из-под масок;
+  'play'   — одновременно: Hero-logo и Button проявляются, строки
+             Hero-title / Hero-sub-left / Hero-sub-right выезжают снизу
+             из-под масок;
   'static' — без анимации (prefers-reduced-motion).
 */
 export type HeroReveal = 'hidden' | 'play' | 'static'
@@ -42,17 +43,17 @@ export function useHeroReveal(
       // иначе инлайн `opacity: 1` перебивает hover:opacity-70 у Button.
       const shown = { autoAlpha: 1, clearProps: 'opacity,visibility' }
       const fade = { ...shown, duration: FADE_DURATION, ease: FADE_EASE }
-      tl.to(logo, fade)
-      tl.to(button, { ...fade, clearProps: 'opacity,visibility,transition' })
-      tl.set(blocks, shown)
-      tl.addLabel('lines')
+      // Всё стартует одновременно, с позиции 0.
+      tl.to(logo, fade, 0)
+      tl.to(button, { ...fade, clearProps: 'opacity,visibility,transition' }, 0)
+      tl.set(blocks, shown, 0)
 
       // Делим на строки только сейчас: шрифт уже загружен прелоудером, и
       // только видимые на этом брейкпоинте тексты (у Hero-sub-left их два).
       revertLines = addLinesReveal(
         tl,
         visibleTexts(q('[data-reveal-lines]')),
-        'lines',
+        0,
       )
     }, root)
 
