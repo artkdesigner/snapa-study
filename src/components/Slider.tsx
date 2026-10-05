@@ -15,8 +15,9 @@ import slide4Full from '../assets/slider-4-full.webp'
   текущий пункт списка яркий, остальные — 40%. Стартовое состояние — первый
   слайд; смена по скроллу с пином — src/lib/useScrollSlides.ts.
   Заголовок и пункты списка по очереди появляются, когда секция видна на 70%
-  (src/lib/useScrollItemsReveal.ts). Линия пункта — на кнопке, а не на li:
-  появление анимирует кнопку (opacity li занят яркостью активного/hover).
+  (src/lib/useScrollItemsReveal.ts), полоска Slider-list-line растёт по
+  ширине вместе с пунктом. Полоска — внутри кнопки, а не на li: появление
+  анимирует кнопку (opacity li занят яркостью активного/hover).
   Mobile/Tablet: картинка сверху занимает всё свободное место, список снизу.
   Desktop: две равные колонки, список прижат к низу правой.
   Картинки: на Desktop у слайдов 2–4 свой кадр из Figma (вырезан из
@@ -105,7 +106,7 @@ function Slider() {
                 <button
                   type="button"
                   data-reveal-item
-                  className="Slider-list-button flex w-full border-b border-accent cursor-pointer items-center gap-10 py-5 text-left md:items-start lg:py-10"
+                  className="Slider-list-button relative flex w-full cursor-pointer items-center gap-10 py-5 text-left md:items-start lg:py-10"
                 >
                   <span className="Slider-list-number shrink-0">
                     {String(i + 1).padStart(2, '0')}.
@@ -113,6 +114,11 @@ function Slider() {
                   <span className="Slider-list-title min-w-0 flex-1">
                     {slide.title}
                   </span>
+                  <span
+                    aria-hidden="true"
+                    data-reveal-line
+                    className="Slider-list-line pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-accent"
+                  />
                 </button>
               </li>
             ))}

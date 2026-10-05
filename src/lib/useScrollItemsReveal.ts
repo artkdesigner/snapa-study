@@ -18,6 +18,8 @@ const START_VIEWPORT = 0.3
 /*
   Элементы [data-reveal-item] внутри секции по очереди появляются (opacity +
   slide-up): каждый следующий стартует через STEP после старта предыдущего.
+  [data-reveal-line] внутри элемента одновременно с ним растёт по ширине от 0
+  до 100% (scaleX от левого края).
   При скролле назад выше точки запуска все сразу и одновременно уходят
   обратно; смена направления на ходу подхватывает их с текущего места.
 */
@@ -35,6 +37,10 @@ export function useScrollItemsReveal(rootRef: RefObject<HTMLElement | null>) {
       parseFloat(getComputedStyle(document.documentElement).fontSize) *
       DISTANCE_REM
     const hidden = () => ({ autoAlpha: 0, y: distance() })
+    const lines = items.map((item) =>
+      item.querySelector<HTMLElement>('[data-reveal-line]'),
+    )
+    const tween = { duration: DURATION, ease: EASE, overwrite: true }
     let tl: gsap.core.Timeline | null = null
 
     // Сначала пустой контекст, потом ctx.add — колбэки ScrollTrigger могут
@@ -45,34 +51,23 @@ export function useScrollItemsReveal(rootRef: RefObject<HTMLElement | null>) {
       ctx.add(() => {
         tl?.kill()
         tl = gsap.timeline()
-        items.forEach((item, i) =>
-          tl!.to(
-            item,
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: DURATION,
-              ease: EASE,
-              overwrite: true,
-            },
-            i * STEP,
-          ),
-        )
+        items.forEach((item, i) => {
+          tl!.to(item, { ...tween, autoAlpha: 1, y: 0 }, i * STEP)
+          const line = lines[i]
+          if (line) tl!.to(line, { ...tween, scaleX: 1 }, i * STEP)
+        })
       })
     const hide = () =>
       ctx.add(() => {
         tl?.kill()
         tl = null
-        gsap.to(items, {
-          ...hidden(),
-          duration: DURATION,
-          ease: EASE,
-          overwrite: true,
-        })
+        gsap.to(items, { ...tween, ...hidden() })
+        gsap.to(lines.filter(Boolean), { ...tween, scaleX: 0 })
       })
 
     ctx.add(() => {
       gsap.set(items, hidden())
+      gsap.set(lines.filter(Boolean), { scaleX: 0 })
       ScrollTrigger.create({
         // по потоку — секция может прилипать (sticky), см. flowTop
         start: () => flowTop(root) - window.innerHeight * START_VIEWPORT,
