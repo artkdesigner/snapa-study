@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { useMaskSlides } from '../lib/useMaskSlides'
+import { MASK_LEAD_SCREENS, useMaskSlides } from '../lib/useMaskSlides'
 import mask1Sm from '../assets/mask-1-1920.webp'
 import mask1Md from '../assets/mask-1-2880.webp'
 import mask1Lg from '../assets/mask-1-3840.webp'
@@ -63,12 +63,12 @@ function Mask() {
   useMaskSlides(rootRef)
 
   return (
-    // Высота — по экрану на слайд: столько прокрутки уходит на смены, пока
-    // Mask-pin прилип к верху (src/lib/useMaskSlides.ts).
+    // Высота — по экрану на слайд + запас до первой смены: столько прокрутки
+    // Mask-pin стоит прилипшим (src/lib/useMaskSlides.ts).
     <section
       ref={rootRef}
       aria-label="Design details"
-      style={{ height: `${SLIDES.length * 100}svh` }}
+      style={{ height: `${(SLIDES.length + MASK_LEAD_SCREENS) * 100}svh` }}
       className="Mask relative z-30 bg-bg-primary text-primary"
     >
       <div className="Mask-pin sticky top-0 h-svh overflow-clip [container-type:size]">
