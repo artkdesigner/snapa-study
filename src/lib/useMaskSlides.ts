@@ -6,7 +6,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 // Экранов прокрутки до первой смены: первый слайд прилип и стоит.
 // Высота секции в Mask.tsx учитывает этот запас.
-export const MASK_LEAD_SCREENS = 1
+export const MASK_LEAD_SCREENS = 0.5
 
 /*
   Смена слайдов маской: секция высотой в N экранов + запас, внутри прилипает
