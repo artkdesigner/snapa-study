@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useScrollSlides } from '../lib/useScrollSlides'
 import { useScrollItemsReveal } from '../lib/useScrollItemsReveal'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 import slide1 from '../assets/slider-1.webp'
 import slide2 from '../assets/slider-2.webp'
 import slide3 from '../assets/slider-3.webp'
@@ -20,6 +21,8 @@ import slide4Full from '../assets/slider-4-full.webp'
   анимирует кнопку (opacity li занят яркостью активного/hover).
   Mobile/Tablet: картинка сверху занимает всё свободное место, список снизу.
   Desktop: две равные колонки, список прижат к низу правой.
+  Секция прилипает в конце, и на неё наезжает Mask; Slider-overlay
+  затемняет её по мере накрытия (src/lib/useCoverOverlay.ts).
   Картинки: на Desktop у слайдов 2–4 свой кадр из Figma (вырезан из
   исходника — `image`), на Mobile/Tablet — исходник целиком (`imageFull`),
   везде object-cover по центру.
@@ -54,15 +57,22 @@ function Slider() {
   const rootRef = useRef<HTMLElement>(null)
   useScrollSlides(rootRef)
   useScrollItemsReveal(rootRef)
+  useCoverOverlay(rootRef)
 
   return (
     // Высота — по экрану на слайд: столько прокрутки уходит на смену слайдов,
     // пока Slider-pin прилип к верху (src/lib/useScrollSlides.ts).
+    // Сама секция тоже sticky, с top = экран минус её высота: прилипает,
+    // когда последний экран (Slider-pin на последнем слайде) дошёл до низа,
+    // и стоит, пока на неё наезжает Mask.
     <section
       ref={rootRef}
       aria-labelledby="slider-title"
-      style={{ height: `${SLIDES.length * 100}svh` }}
-      className="Slider relative z-20 bg-bg-primary text-accent"
+      style={{
+        height: `${SLIDES.length * 100}svh`,
+        top: `${(1 - SLIDES.length) * 100}svh`,
+      }}
+      className="Slider sticky z-20 bg-bg-primary text-accent"
     >
       <div className="Slider-pin sticky top-0 flex h-svh flex-col gap-2.5 p-2.5 md:gap-5 md:p-5 lg:flex-row lg:gap-7.5 lg:p-7.5">
         {/* min-h — страховка на очень низких экранах, в пропорциях макета не
@@ -124,6 +134,13 @@ function Slider() {
             ))}
           </ol>
         </div>
+
+        {/* внутри прилипшего Slider-pin — затемняет видимый экран */}
+        <div
+          aria-hidden="true"
+          data-cover-overlay
+          className="Slider-overlay pointer-events-none absolute inset-0 bg-black opacity-0"
+        />
       </div>
     </section>
   )

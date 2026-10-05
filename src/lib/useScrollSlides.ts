@@ -1,6 +1,7 @@
 import { useLayoutEffect, type RefObject } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { flowTop } from './flowTop'
 import { scrollPage } from './useSmoothScroll'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -84,9 +85,9 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       markCurrent(0)
 
       const slides = ScrollTrigger.create({
-        trigger: root,
-        start: 'top top',
-        end: 'bottom bottom',
+        // по потоку: секция прилипает в конце (sticky), прилипший rect врёт
+        start: () => flowTop(root),
+        end: () => flowTop(root) + root.offsetHeight - window.innerHeight,
         onUpdate: (self) => {
           const next = Math.round(self.progress * (count - 1))
           // ctx.add — чтобы твины из колбэка тоже откатились в cleanup
@@ -108,8 +109,7 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       // Картинки под рамкой обрезаны overflow, и ленивая загрузка считает их
       // невидимыми — грузим все заранее, за экран до секции.
       ScrollTrigger.create({
-        trigger: root,
-        start: 'top bottom+=100%',
+        start: () => flowTop(root) - window.innerHeight * 2,
         once: true,
         onEnter: () => images.forEach((img) => (img.loading = 'eager')),
       })

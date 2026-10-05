@@ -11,7 +11,8 @@ import mask3Md from '../assets/mask-3-2880.webp'
 import mask3Lg from '../assets/mask-3-3840.webp'
 
 /*
-  Детали корпуса: 3 полноэкранных слайда лежат стопкой в Mask-pin (в Figma —
+  Детали корпуса: наезжает поверх прилипшего Slider (z-30). 3 полноэкранных
+  слайда лежат стопкой в Mask-pin (в Figma —
   слои Mask-slide друг на друге, сверху Mask-slide.current). Первый слайд —
   сверху, остальные под ним по порядку. Каждый слайд обёрнут в маску
   Mask-group: при скролле маска поворачивается вокруг нижнего левого угла и
@@ -68,7 +69,7 @@ function Mask() {
       ref={rootRef}
       aria-label="Design details"
       style={{ height: `${SLIDES.length * 100}svh` }}
-      className="Mask relative bg-bg-primary text-primary"
+      className="Mask relative z-30 bg-bg-primary text-primary"
     >
       <div className="Mask-pin sticky top-0 h-svh overflow-clip [container-type:size]">
         {SLIDES.map((slide, i) => (

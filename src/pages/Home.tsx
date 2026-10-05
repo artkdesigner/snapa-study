@@ -26,16 +26,16 @@ function Home() {
         <Preloader targetRef={heroTitleRef} onDone={handlePreloaderDone} />
       )}
       <main>
-        {/* Стопка наездов: Hero и Intro прилипают (sticky), каждая следующая
-            секция (z выше) наезжает на предыдущую, та затемняется своим
-            оверлеем (useCoverOverlay в Hero и Intro).
+        {/* Стопка наездов: Hero, Intro и Slider прилипают (sticky), каждая
+            следующая секция (z выше) наезжает на предыдущую, та затемняется
+            своим оверлеем (useCoverOverlay в Hero, Intro и Slider).
             Прилипание ограничено обёрткой — дальше стопка уезжает целиком. */}
         <div className="Cover-stack">
           <Hero titleRef={heroTitleRef} reveal={heroReveal} />
           <Intro />
           <Slider />
+          <Mask />
         </div>
-        <Mask />
       </main>
     </>
   )
