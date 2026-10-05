@@ -5,8 +5,10 @@ import { useScrollLinesReveal } from '../lib/useScrollLinesReveal'
   Экран-манифест: заголовок и подпись по центру светлого экрана. В Figma
   колонка центрирована по вертикали во фрейме высотой с вьюпорт, поэтому
   здесь — min-h-svh + flex-центровка, ширины блоков из макета.
-  Наезжает поверх прилипшего Hero (relative z-10). При доскролле строки
-  обоих текстов выезжают снизу из-под масок, при скролле назад — уезжают.
+  Наезжает поверх прилипшего Hero (z-10), сама прилипает (sticky), и на неё
+  наезжает Slider; Intro-overlay затемняет её по мере накрытия
+  (src/lib/useCoverOverlay.ts). Строки обоих текстов выезжают снизу из-под
+  масок, при скролле назад — уезжают.
 */
 function Intro() {
   const rootRef = useRef<HTMLElement>(null)
@@ -16,7 +18,7 @@ function Intro() {
     <section
       ref={rootRef}
       aria-labelledby="intro-title"
-      className="Intro relative z-10 flex min-h-svh flex-col items-center justify-center gap-6 bg-bg-primary px-2.5 text-center text-accent md:gap-10 md:px-0 lg:gap-15"
+      className="Intro sticky top-0 z-10 flex min-h-svh flex-col items-center justify-center gap-6 bg-bg-primary px-2.5 text-center text-accent md:gap-10 md:px-0 lg:gap-15"
     >
       <h2
         id="intro-title"
@@ -33,6 +35,12 @@ function Intro() {
         Instant photography reimagined with clean design, powerful features, and
         photographs worth keeping.
       </p>
+
+      <div
+        aria-hidden="true"
+        data-cover-overlay
+        className="Intro-overlay pointer-events-none absolute inset-0 bg-black opacity-0"
+      />
     </section>
   )
 }

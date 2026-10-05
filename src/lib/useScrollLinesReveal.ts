@@ -9,18 +9,19 @@ import {
   visibleTexts,
   type PreparedLines,
 } from './linesReveal'
+import { flowTop } from './flowTop'
 
 gsap.registerPlugin(ScrollTrigger)
 
 // Точка запуска: верх секции дошёл до 30% высоты экрана — секция видна на
 // 70% экрана (для секции высотой в экран — наехала на предыдущую на 70%).
-const START = 'top 30%'
+const START_VIEWPORT = 0.3
 
 /*
-  Когда верх секции доскроллили до START, строки всех [data-reveal-lines]
+  Когда верх секции доскроллили до START_VIEWPORT, строки всех [data-reveal-lines]
   выезжают снизу из-под масок — одной общей очередью по порядку разметки
   (строки следующего блока продолжают stagger предыдущего). При скролле
-  назад выше START все строки сразу и одновременно уезжают обратно (не
+  назад выше этой точки все строки сразу и одновременно уезжают обратно (не
   обратным проигрыванием: оно начиналось бы с последнего блока и с почти
   неподвижного хвоста expo.out).
   На строки тексты делятся только на время анимации — по раскладке текущей
@@ -77,8 +78,8 @@ export function useScrollLinesReveal(rootRef: RefObject<HTMLElement | null>) {
     ctx.add(() => {
       gsap.set(texts, { autoAlpha: 0 })
       ScrollTrigger.create({
-        trigger: root,
-        start: START,
+        // по потоку — секция может прилипать (sticky), см. flowTop
+        start: () => flowTop(root) - window.innerHeight * START_VIEWPORT,
         onEnter: show,
         onLeaveBack: hide,
       })

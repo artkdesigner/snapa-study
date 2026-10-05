@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+import { useScrollSlides } from '../lib/useScrollSlides'
 import slide1 from '../assets/slider-1.webp'
 import slide2 from '../assets/slider-2.webp'
 import slide3 from '../assets/slider-3.webp'
@@ -6,7 +8,8 @@ import slide4 from '../assets/slider-4.webp'
 /*
   Характеристики: 4 слайда — картинка + пункт списка. Текущая картинка стоит
   в рамке, остальные ждут под ней (сдвинуты на 100% вниз, обрезаны рамкой);
-  текущий пункт списка яркий, остальные — 40%.
+  текущий пункт списка яркий, остальные — 40%. Стартовое состояние — первый
+  слайд; смена по скроллу с пином — src/lib/useScrollSlides.ts.
   Mobile/Tablet: картинка сверху занимает всё свободное место, список снизу.
   Desktop: две равные колонки, список прижат к низу правой.
 */
@@ -35,55 +38,60 @@ const SLIDES = [
   },
 ]
 
-type SliderProps = {
-  current?: number
-}
+function Slider() {
+  const rootRef = useRef<HTMLElement>(null)
+  useScrollSlides(rootRef)
 
-function Slider({ current = 0 }: SliderProps) {
   return (
+    // Высота — по экрану на слайд: столько прокрутки уходит на смену слайдов,
+    // пока Slider-pin прилип к верху (src/lib/useScrollSlides.ts).
     <section
+      ref={rootRef}
       aria-labelledby="slider-title"
-      className="Slider flex min-h-svh flex-col gap-2.5 bg-bg-primary p-2.5 text-accent md:gap-5 md:p-5 lg:flex-row lg:gap-7.5 lg:p-7.5"
+      style={{ height: `${SLIDES.length * 100}svh` }}
+      className="Slider relative z-20 bg-bg-primary text-accent"
     >
-      {/* min-h — страховка на очень низких экранах, в пропорциях макета не
-          срабатывает (там картинка ≈ 63% высоты) */}
-      <div className="Slider-img-wrap relative min-h-[50svh] flex-1 overflow-clip lg:min-h-0">
-        {SLIDES.map((slide, i) => (
-          <img
-            key={slide.title}
-            src={slide.image}
-            alt={slide.alt}
-            aria-hidden={i !== current}
-            loading="lazy"
-            draggable={false}
-            className={`Slider-img absolute inset-0 block size-full object-cover ${slide.position ?? 'object-center'} ${i === current ? '' : '[transform:translateY(100%)]'}`}
-          />
-        ))}
-      </div>
-
-      <div className="Slider-right flex flex-col gap-2.5 lg:flex-1 lg:justify-end lg:gap-3.75">
-        <h2
-          id="slider-title"
-          className="Slider-title text-lead-sm text-accent/40 lg:text-lead-lg"
-        >
-          Characteristics
-        </h2>
-        <ol className="Slider-list">
+      <div className="Slider-pin sticky top-0 flex h-svh flex-col gap-2.5 p-2.5 md:gap-5 md:p-5 lg:flex-row lg:gap-7.5 lg:p-7.5">
+        {/* min-h — страховка на очень низких экранах, в пропорциях макета не
+            срабатывает (там картинка ≈ 63% высоты) */}
+        <div className="Slider-img-wrap relative min-h-[50svh] flex-1 overflow-clip lg:min-h-0">
           {SLIDES.map((slide, i) => (
-            <li
+            <img
               key={slide.title}
-              aria-current={i === current ? 'true' : undefined}
-              className={`Slider-list-item flex items-center gap-10 border-b border-accent py-5 text-heading-sm md:items-start md:text-heading-md lg:py-10 lg:text-heading-lg ${i === current ? '' : 'opacity-40'}`}
-            >
-              <span className="Slider-list-number shrink-0">
-                {String(i + 1).padStart(2, '0')}.
-              </span>
-              <span className="Slider-list-title min-w-0 flex-1">
-                {slide.title}
-              </span>
-            </li>
+              src={slide.image}
+              alt={slide.alt}
+              aria-hidden={i !== 0}
+              loading="lazy"
+              draggable={false}
+              className={`Slider-img absolute inset-0 block size-full object-cover ${slide.position ?? 'object-center'} ${i === 0 ? '' : '[transform:translateY(100%)]'}`}
+            />
           ))}
-        </ol>
+        </div>
+
+        <div className="Slider-right flex flex-col gap-2.5 lg:flex-1 lg:justify-end lg:gap-3.75">
+          <h2
+            id="slider-title"
+            className="Slider-title text-lead-sm text-accent/40 lg:text-lead-lg"
+          >
+            Characteristics
+          </h2>
+          <ol className="Slider-list">
+            {SLIDES.map((slide, i) => (
+              <li
+                key={slide.title}
+                aria-current={i === 0 ? 'true' : undefined}
+                className={`Slider-list-item flex items-center gap-10 border-b border-accent py-5 text-heading-sm md:items-start md:text-heading-md lg:py-10 lg:text-heading-lg ${i === 0 ? '' : 'opacity-40'}`}
+              >
+                <span className="Slider-list-number shrink-0">
+                  {String(i + 1).padStart(2, '0')}.
+                </span>
+                <span className="Slider-list-title min-w-0 flex-1">
+                  {slide.title}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   )

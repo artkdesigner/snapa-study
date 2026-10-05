@@ -25,13 +25,14 @@ function Home() {
         <Preloader targetRef={heroTitleRef} onDone={handlePreloaderDone} />
       )}
       <main>
-        {/* Hero прилипает, Intro наезжает на него. Обёртка ограничивает
-            прилипание этой парой: дальше Hero уезжает вместе с ней. */}
-        <div ref={coverRef} className="Hero-cover">
+        {/* Стопка наездов: Hero и Intro прилипают (sticky), каждая следующая
+            секция (z выше) наезжает на предыдущую и затемняет её оверлеем.
+            Прилипание ограничено обёрткой — дальше стопка уезжает целиком. */}
+        <div ref={coverRef} className="Cover-stack">
           <Hero titleRef={heroTitleRef} reveal={heroReveal} />
           <Intro />
+          <Slider />
         </div>
-        <Slider />
       </main>
     </>
   )
