@@ -71,7 +71,12 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       markCurrent(next)
     }
 
-    const ctx = gsap.context(() => {
+    // Сначала пустой контекст, потом ctx.add: ScrollTrigger может вызвать
+    // onUpdate прямо при создании (страница уже прокручена внутрь секции —
+    // восстановление скролла, горячая перезагрузка), а onUpdate обращается к
+    // ctx — внутри gsap.context(() => …) он был бы ещё не объявлен.
+    const ctx = gsap.context(() => {}, root)
+    ctx.add(() => {
       // Стартовое положение — в yPercent, а не transform из класса (GSAP
       // прочитал бы его как y в px и смешал бы с yPercent).
       gsap.set(images, { y: 0, yPercent: (i) => (i === 0 ? 0 : 100) })
@@ -108,7 +113,7 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
         once: true,
         onEnter: () => images.forEach((img) => (img.loading = 'eager')),
       })
-    }, root)
+    })
 
     const onClick = (event: MouseEvent) => {
       const button = (event.target as Element).closest('.Slider-list-button')

@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useScrollLinesReveal } from '../lib/useScrollLinesReveal'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 
 /*
   Экран-манифест: заголовок и подпись по центру светлого экрана. В Figma
@@ -15,6 +16,7 @@ import { useScrollLinesReveal } from '../lib/useScrollLinesReveal'
 function Intro() {
   const rootRef = useRef<HTMLElement>(null)
   useScrollLinesReveal(rootRef)
+  useCoverOverlay(rootRef)
 
   return (
     <section

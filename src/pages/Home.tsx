@@ -4,15 +4,12 @@ import Intro from '../components/Intro'
 import Preloader from '../components/Preloader'
 import Slider from '../components/Slider'
 import type { HeroReveal } from '../lib/useHeroReveal'
-import { useCoverOverlay } from '../lib/useCoverOverlay'
 
 const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function Home() {
   const heroTitleRef = useRef<HTMLHeadingElement>(null)
-  const coverRef = useRef<HTMLDivElement>(null)
-  useCoverOverlay(coverRef)
   // Сначала прелоудер (Hero спрятан), после него — появление элементов Hero.
   const [heroReveal, setHeroReveal] = useState<HeroReveal>(() =>
     prefersReducedMotion() ? 'static' : 'hidden',
@@ -26,9 +23,10 @@ function Home() {
       )}
       <main>
         {/* Стопка наездов: Hero и Intro прилипают (sticky), каждая следующая
-            секция (z выше) наезжает на предыдущую и затемняет её оверлеем.
+            секция (z выше) наезжает на предыдущую, та затемняется своим
+            оверлеем (useCoverOverlay в Hero и Intro).
             Прилипание ограничено обёрткой — дальше стопка уезжает целиком. */}
-        <div ref={coverRef} className="Cover-stack">
+        <div className="Cover-stack">
           <Hero titleRef={heroTitleRef} reveal={heroReveal} />
           <Intro />
           <Slider />

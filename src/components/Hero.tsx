@@ -6,6 +6,7 @@ import { useRef, type Ref } from 'react'
 import Button from './Button'
 import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
 import { useHeroReveal, type HeroReveal } from '../lib/useHeroReveal'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 
 /*
   Сетка вместо абсолютных координат из Figma:
@@ -24,6 +25,7 @@ type HeroProps = {
 function Hero({ titleRef, reveal = 'static' }: HeroProps) {
   const rootRef = useRef<HTMLElement>(null)
   useHeroReveal(rootRef, reveal)
+  useCoverOverlay(rootRef)
 
   return (
     <section
