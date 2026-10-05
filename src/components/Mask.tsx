@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { MASK_LEAD_SCREENS, useMaskSlides } from '../lib/useMaskSlides'
+import { maskScrollScreens, useMaskSlides } from '../lib/useMaskSlides'
 import { useCoverOverlay } from '../lib/useCoverOverlay'
 import mask1Sm from '../assets/mask-1-1920.webp'
 import mask1Md from '../assets/mask-1-2880.webp'
@@ -59,7 +59,7 @@ const SLIDES = [
 ]
 
 const WIDTHS = [1920, 2880, 3840]
-const SECTION_SVH = (SLIDES.length + MASK_LEAD_SCREENS) * 100
+const SECTION_SVH = (1 + maskScrollScreens(SLIDES.length)) * 100
 
 function Mask() {
   const rootRef = useRef<HTMLElement>(null)
@@ -67,8 +67,8 @@ function Mask() {
   useCoverOverlay(rootRef)
 
   return (
-    // Высота — по экрану на слайд + запас до первой смены: столько прокрутки
-    // Mask-pin стоит прилипшим (src/lib/useMaskSlides.ts).
+    // Высота — экран + прокрутка под смены со стоянками (maskScrollScreens):
+    // столько Mask-pin стоит прилипшим (src/lib/useMaskSlides.ts).
     // Сама секция тоже sticky, с top = экран минус её высота: прилипает на
     // последнем слайде и стоит, пока на неё наезжает BigPrint.
     <section

@@ -6,8 +6,15 @@ import { flowTop } from './flowTop'
 gsap.registerPlugin(ScrollTrigger)
 
 // Экранов прокрутки до первой смены: первый слайд прилип и стоит.
-// Высота секции в Mask.tsx учитывает этот запас.
 export const MASK_LEAD_SCREENS = 0.5
+// Сколько стоит открывшийся слайд после своей смены (слайды 2…N): до
+// следующей смены, у последнего — до наезда следующей секции.
+export const MASK_HOLD_SCREENS = 0.25
+
+// Экранов прокрутки, пока Mask-pin прилип: запас + (смена + стоянка) на
+// каждый слайд после первого. Высота секции в Mask.tsx = экран + это.
+export const maskScrollScreens = (count: number) =>
+  MASK_LEAD_SCREENS + (count - 1) * (1 + MASK_HOLD_SCREENS)
 
 /*
   Смена слайдов маской: секция высотой в N экранов + запас, внутри прилипает
@@ -17,7 +24,8 @@ export const MASK_LEAD_SCREENS = 0.5
   следующий слайд. Сам .Mask-slide внутри поворачивается на столько же в
   обратную сторону — картинка и текст стоят на месте, движется только
   граница маски. Сначала MASK_LEAD_SCREENS экранов первый слайд просто стоит,
-  потом на каждую смену — экран прокрутки, угол привязан к скроллу
+  потом на каждую смену — экран прокрутки и MASK_HOLD_SCREENS стоянки
+  открывшегося слайда; угол привязан к скроллу
   (scrub, линейно — плавность даёт Lenis), назад откатывается сам.
   Ожидаются .Mask-group с .Mask-slide внутри, по одной паре на слайд.
 */
@@ -46,9 +54,11 @@ export function useMaskSlides(rootRef: RefObject<HTMLElement | null>) {
       // последний слайд не уходит — он остаётся на экране; смены начинаются
       // после запаса (пустое начало таймлайна — тоже часть скраба)
       groups.slice(0, -1).forEach((group, i) => {
-        const at = MASK_LEAD_SCREENS + i
+        const at = MASK_LEAD_SCREENS + i * (1 + MASK_HOLD_SCREENS)
         tl.to(group, { rotation: -90 }, at).to(slides[i], { rotation: 90 }, at)
       })
+      // пустой хвост — стоянка последнего слайда (единицы таймлайна = экраны)
+      tl.set({}, {}, maskScrollScreens(groups.length))
     }, root)
 
     return () => ctx.revert()
