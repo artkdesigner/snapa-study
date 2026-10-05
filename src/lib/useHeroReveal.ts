@@ -52,9 +52,13 @@ export function useHeroReveal(
       splits = texts.map((el) => splitLines(el))
 
       const tl = gsap.timeline({ onComplete: revertSplits })
-      tl.to(logo, { autoAlpha: 1, duration: FADE_DURATION, ease: FADE_EASE })
-      tl.to(button, { autoAlpha: 1, duration: FADE_DURATION, ease: FADE_EASE })
-      tl.set(blocks, { autoAlpha: 1 })
+      // clearProps: после появления убрать инлайновые opacity/visibility —
+      // иначе инлайн `opacity: 1` перебивает hover:opacity-70 у Button.
+      const shown = { autoAlpha: 1, clearProps: 'opacity,visibility' }
+      const fade = { ...shown, duration: FADE_DURATION, ease: FADE_EASE }
+      tl.to(logo, fade)
+      tl.to(button, fade)
+      tl.set(blocks, shown)
       tl.addLabel('lines')
 
       splits.forEach((split, i) => {
