@@ -2,9 +2,10 @@ import heroDesktop from '../assets/hero-desktop.webp'
 import heroTablet from '../assets/hero-tablet.webp'
 import heroMobile from '../assets/hero-mobile.webp'
 import logo from '../assets/logo.svg'
-import type { Ref } from 'react'
+import { useRef, type Ref } from 'react'
 import Button from './Button'
 import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
+import { useHeroReveal, type HeroReveal } from '../lib/useHeroReveal'
 
 /*
   Сетка вместо абсолютных координат из Figma:
@@ -15,11 +16,18 @@ import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
 type HeroProps = {
   // h1 — цель, на которую прелоудер приводит вордмарк
   titleRef?: Ref<HTMLHeadingElement>
+  reveal?: HeroReveal
 }
 
-function Hero({ titleRef }: HeroProps) {
+function Hero({ titleRef, reveal = 'static' }: HeroProps) {
+  const rootRef = useRef<HTMLElement>(null)
+  useHeroReveal(rootRef, reveal)
+
   return (
-    <section className="Hero relative isolate grid min-h-svh grid-rows-[auto_1fr_auto_auto] bg-dark px-2.5 pt-2.5 pb-5 text-primary md:px-5 md:pt-5 lg:grid-cols-[1fr_45.375rem] lg:grid-rows-[auto_1fr_auto] lg:p-7.5">
+    <section
+      ref={rootRef}
+      className="Hero relative isolate grid min-h-svh grid-rows-[auto_1fr_auto_auto] bg-dark px-2.5 pt-2.5 pb-5 text-primary md:px-5 md:pt-5 lg:grid-cols-[1fr_45.375rem] lg:grid-rows-[auto_1fr_auto] lg:p-7.5"
+    >
       <picture className="Hero-bg absolute inset-0 -z-10">
         <source media="(min-width: 62rem)" srcSet={heroDesktop} />
         <source media="(min-width: 30.0625rem)" srcSet={heroTablet} />
@@ -58,25 +66,31 @@ function Hero({ titleRef }: HeroProps) {
       </h1>
 
       <div className="Hero-bottom row-start-4 flex flex-col gap-10 pt-10 lg:col-span-2 lg:row-start-3 lg:flex-row-reverse lg:items-end lg:gap-7.5 lg:pt-0">
-        <p className="Hero-title text-title-sm md:w-[26.25rem] md:text-title-md lg:w-[45.375rem] lg:shrink-0 lg:text-title-lg">
+        <p
+          data-reveal-lines
+          className="Hero-title text-title-sm md:w-[26.25rem] md:text-title-md lg:w-[45.375rem] lg:shrink-0 lg:text-title-lg"
+        >
           A modern instant camera with clean design, a high-quality display,
           large-format prints, creative presets
         </p>
 
         <div className="Hero-sub-wrap flex items-center gap-2.5 text-body text-primary/40 lg:flex-1 lg:items-start lg:gap-7.5 lg:text-primary/80">
-          <p className="Hero-sub-left min-w-0 flex-1 lg:w-[21.75rem] lg:flex-none">
-            <span className="lg:hidden">
+          <div className="Hero-sub-left min-w-0 flex-1 lg:w-[21.75rem] lg:flex-none">
+            <p data-reveal-lines className="lg:hidden">
               Instant Large Prints
               <br />
               with Rich Details
-            </span>
-            <span className="hidden lg:inline">
+            </p>
+            <p data-reveal-lines className="hidden lg:block">
               A New Standard
               <br />
               for Instant Photography
-            </span>
-          </p>
-          <p className="Hero-sub-right min-w-0 flex-1 lg:w-[21.75rem] lg:flex-none">
+            </p>
+          </div>
+          <p
+            data-reveal-lines
+            className="Hero-sub-right min-w-0 flex-1 lg:w-[21.75rem] lg:flex-none"
+          >
             Ergonomic Design Made
             <br />
             for Comfortable Shooting

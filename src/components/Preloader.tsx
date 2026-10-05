@@ -22,7 +22,7 @@ const LETTER_STAGGER = 0.16
 const LETTER_EASE = 'expo.out'
 const MOVE_DURATION = 1 // кадр 04 → 05: переезд на место Hero-snapa
 const MOVE_EASE = 'expo.inOut'
-const FADE_DURATION = 0.6 // временно: уход тёмного фона до шага «появление Hero»
+const FADE_DURATION = 0.6 // исчезновение прелоудера, после него — появление Hero
 
 type PreloaderProps = {
   targetRef: RefObject<HTMLElement | null>
