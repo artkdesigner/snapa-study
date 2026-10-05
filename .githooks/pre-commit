@@ -1,0 +1,3 @@
+#!/bin/sh
+command -v gitleaks >/dev/null || { echo "gitleaks не установлен — пропускаю скан"; exit 0; }
+exec gitleaks git --pre-commit --redact --staged --verbose
