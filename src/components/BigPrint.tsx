@@ -1,14 +1,18 @@
+import { useRef } from 'react'
 import bigprintSm from '../assets/bigprint-1280.webp'
 import bigprintMd from '../assets/bigprint-2560.webp'
 import bigprintLg from '../assets/bigprint-3660.webp'
+import { BIGPRINT_ANIM_SVH, useBigPrintReveal } from '../lib/useBigPrintReveal'
 
-// Запас прокрутки, пока BigPrint-pin прилип, — под появление элементов по
-// скроллу (следующий шаг).
-const EXTRA_SVH = 100
+const TITLE = 'Big prints'
 
 /*
   Большие отпечатки: наезжает поверх прилипшего Mask (z-40). Секция выше
-  экрана на EXTRA_SVH, внутри прилипает (sticky) BigPrint-pin на экран.
+  экрана на BIGPRINT_ANIM_SVH, внутри прилипает (sticky) BigPrint-pin на
+  экран; пока он прилип, по скроллу появляется BigPrint-left (заголовок
+  побуквенно → BigPrint-middle → строки текста, src/lib/useBigPrintReveal.ts).
+  Заголовок — маска (overflow-clip, продлена вниз под хвосты g/p) с буквами
+  отдельными span; читается целиком через aria-label.
   Mobile/Tablet: всё по центру колонкой, текст сверху, картинка снизу
   занимает всё оставшееся место.
   Desktop: две равные колонки на всю высоту — слева текст (заголовок
@@ -19,10 +23,14 @@ const EXTRA_SVH = 100
   или с запасом от ширины (Mobile/Tablet).
 */
 function BigPrint() {
+  const rootRef = useRef<HTMLElement>(null)
+  useBigPrintReveal(rootRef)
+
   return (
     <section
+      ref={rootRef}
       aria-labelledby="bigprint-title"
-      style={{ height: `${100 + EXTRA_SVH}svh` }}
+      style={{ height: `${100 + BIGPRINT_ANIM_SVH}svh` }}
       className="BigPrint relative z-40 bg-bg-primary text-accent"
     >
       <div className="BigPrint-pin sticky top-0 flex h-svh flex-col items-center gap-15 px-2.5 py-10 md:px-5 md:py-15 lg:flex-row lg:items-end lg:gap-7.5 lg:p-7.5">
@@ -30,9 +38,23 @@ function BigPrint() {
           {/* «Bigg prints» в Figma — опечатка */}
           <h2
             id="bigprint-title"
-            className="BigPrint-title w-full text-poster-sm md:text-poster-md lg:text-poster-lg"
+            aria-label={TITLE}
+            className="BigPrint-title -mb-[0.2em] w-full overflow-clip pb-[0.2em] text-poster-sm md:text-poster-md lg:text-poster-lg"
           >
-            Big prints
+            {Array.from(TITLE).map((char, i) =>
+              char === ' ' ? (
+                ' '
+              ) : (
+                <span
+                  key={i}
+                  data-letter
+                  aria-hidden="true"
+                  className="inline-block"
+                >
+                  {char}
+                </span>
+              ),
+            )}
           </h2>
 
           <div className="BigPrint-middle flex w-full flex-col gap-2.5">
