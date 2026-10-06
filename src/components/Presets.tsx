@@ -9,7 +9,7 @@ import Polaroid from './Polaroid'
   Presets-bottom, разнесены space-between), сверху по центру — заголовок
   поверх тезисов, по центру экрана — полароид поверх всего.
   Слои как в макете: полароид над заголовком, заголовок над тезисами,
-  нижние тезисы под всем (на Tablet полароид заходит на них).
+  нижние тезисы под всем.
   Переход из Choose (src/lib/useChooseToPresets.ts): секция поднята под
   конец Choose (отрицательный margin) и прилипает (Presets-pin), пока
   поверх неё секция Choose сжимается в полароид. Свой полароид здесь в
@@ -18,12 +18,12 @@ import Polaroid from './Polaroid'
   движение» перехода нет: секция идёт обычным экраном после Choose, и
   видно этот полароид.
   Полароид: повёрнут на −5°, центр — от центра экрана со сдвигом из макета
-  (Mobile — ниже, Tablet — ниже и левее, Desktop — ровно по центру).
+  (Mobile и Tablet — ниже, Desktop — ровно по центру).
   Фото: кадр ~16:9 в портретной рамке упирается в высоту — sizes = высота
   рамки × пропорции файла.
 */
 const PHOTO_SIZES =
-  '(min-width: 62rem) 58.4vw, (min-width: 30.0625rem) 125vw, 154vw'
+  '(min-width: 62rem) 58.4vw, (min-width: 30.0625rem) 111vw, 154vw'
 // Высота секции в переходе: экраны перехода + сам экран Presets.
 const OVERLAP = { '--overlap': `${(CHOOSE_TO_PRESETS_SCREENS + 1) * 100}svh` }
 
@@ -59,9 +59,9 @@ function Presets() {
         <div className="Presets-photo pointer-events-none absolute inset-0 z-4 flex items-center justify-center motion-safe:opacity-0">
           <Polaroid
             data-presets-polaroid
-            className="relative top-[5.1333rem] [transform:rotate(-5deg)] md:top-[4.495rem] md:left-[-1.3889rem] lg:top-0 lg:left-0"
+            className="relative top-[5.1333rem] [transform:rotate(-5deg)] md:top-[4.4881rem] md:left-0 lg:top-0 lg:left-0"
           >
-            <div className="Choose-mask-photo relative h-[20.25rem] w-[18rem] overflow-clip bg-bg-primary md:h-[33.625rem] md:w-[29.875rem] lg:h-[39.25rem] lg:w-[35rem]">
+            <div className="Choose-mask-photo relative h-[20.25rem] w-[18rem] overflow-clip bg-bg-primary md:h-[29.6691rem] md:w-[26.3603rem] lg:h-[39.25rem] lg:w-[35rem]">
               <img
                 src={photoLg}
                 srcSet={`${photoSm} 1920w, ${photoLg} 2912w`}

@@ -24,7 +24,7 @@ function Polaroid({
   return (
     <div
       {...rest}
-      className={`Choose-mask flex flex-col gap-2.5 overflow-clip bg-primary p-2.5 shadow-[1rem_1rem_1.3333rem_rgb(1_13_24/0.1)] md:gap-4 md:p-4 md:shadow-[1.6619rem_1.6619rem_2.2159rem_rgb(1_13_24/0.1)] lg:gap-5 lg:p-5 lg:shadow-[1.9428rem_1.9428rem_2.5904rem_rgb(1_13_24/0.1)] ${className}`}
+      className={`Choose-mask flex flex-col gap-2.5 overflow-clip bg-primary p-2.5 shadow-[1rem_1rem_1.3333rem_rgb(1_13_24/0.1)] md:gap-[0.8824rem] md:p-[0.8824rem] md:shadow-[1.4664rem_1.4664rem_1.9552rem_rgb(1_13_24/0.1)] lg:gap-5 lg:p-5 lg:shadow-[1.9428rem_1.9428rem_2.5904rem_rgb(1_13_24/0.1)] ${className}`}
     >
       <img
         src={paper}
@@ -39,10 +39,10 @@ function Polaroid({
         aria-hidden={captionHidden || undefined}
         className="Choose-mask-bottom relative flex flex-col items-end font-script leading-none font-normal text-accent"
       >
-        <span className="Choose-mask-date self-stretch text-[1.125rem] md:text-[1.875rem] lg:text-[2.1919rem]">
+        <span className="Choose-mask-date self-stretch text-[1.125rem] md:text-[1.6544rem] lg:text-[2.1919rem]">
           April 2026
         </span>{' '}
-        <span className="Choose-mask-city-wrap text-[2.673rem] md:text-[4.375rem] lg:text-[5.1146rem]">
+        <span className="Choose-mask-city-wrap text-[2.673rem] md:text-[3.8603rem] lg:text-[5.1146rem]">
           Italy
         </span>
       </p>

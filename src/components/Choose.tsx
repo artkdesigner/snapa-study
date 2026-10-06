@@ -133,7 +133,7 @@ function Choose() {
             поля и подпись — за краями (src/lib/useChooseToPresets.ts) */}
         <Polaroid
           captionHidden
-          className="absolute -top-2.5 -left-2.5 md:-top-4 md:-left-4 lg:-top-5 lg:-left-5"
+          className="absolute -top-2.5 -left-2.5 md:-top-[0.8824rem] md:-left-[0.8824rem] lg:-top-5 lg:-left-5"
         >
           <div className="Choose-pin relative isolate flex h-[100cqh] w-[100cqw] shrink-0 flex-col items-center justify-end gap-15 overflow-clip bg-bg-primary lg:flex-row lg:justify-between lg:gap-0">
             <div className="Choose-title-wrap relative z-3 flex shrink-0 lg:pl-7.5">
