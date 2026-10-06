@@ -120,6 +120,7 @@ function Steps() {
     // стоит, пока на неё наезжает Footer.
     <section
       ref={rootRef}
+      id="steps"
       aria-labelledby="steps-title"
       style={{
         height: `${SECTION_SVH}svh`,

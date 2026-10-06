@@ -1,4 +1,5 @@
 import { Fragment, useRef } from 'react'
+import { scrollToSection } from '../lib/scrollToSection'
 import { useFooterReveal } from '../lib/useFooterReveal'
 import logo from '../assets/logo.svg'
 import bgDesktop from '../assets/footer-desktop.webp'
@@ -24,7 +25,16 @@ import bgMobile from '../assets/footer-mobile.webp'
   в Figma — opacity 70%; переход как у Button (Ease out 300ms) —
   длительность из Figma не читается.
 */
-const MENU = ['Camera', 'Prints', 'Presets', 'Mobile App', 'Contact']
+// Пункты меню ведут к секциям (scrollToSection); Order — кнопка, откроет
+// Popup (будет позже).
+const MENU = [
+  { name: 'Camera', section: 'slider' },
+  { name: 'Prints', section: 'bigprint' },
+  { name: 'Presets', section: 'mask' },
+  { name: 'Mobile App', section: 'steps' },
+]
+const LINK_BIG =
+  'Footer-link-big block cursor-pointer transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70'
 // Главные страницы соцсетей (своих аккаунтов у Snapa нет); открываются в
 // новой вкладке.
 const SOCIAL = [
@@ -120,17 +130,28 @@ function Footer() {
             Menu
           </p>
           <ul className="Footer-menu-nav flex flex-col items-start text-heading-sm md:text-heading-md lg:text-heading-lg">
-            {MENU.map((item) => (
-              <li key={item}>
-                {/* Куда ведут пункты — пока не задано (placeholder-ссылки) */}
-                {/* Hover в Figma — opacity 70% (как Footer-link-small). Появление
-                    анимирует текст внутри: инлайн-opacity от GSAP на самой
-                    ссылке перебила бы hover. */}
-                <a className="Footer-link-big block transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70">
-                  <span className="Footer-link-big-text block">{item}</span>
+            {/* Hover в Figma — opacity 70% (как Footer-link-small). Появление
+                анимирует текст внутри: инлайн-opacity от GSAP на самой
+                ссылке перебила бы hover. */}
+            {MENU.map(({ name, section }) => (
+              <li key={name}>
+                <a
+                  href={`#${section}`}
+                  onClick={(event) => {
+                    event.preventDefault()
+                    scrollToSection(section)
+                  }}
+                  className={LINK_BIG}
+                >
+                  <span className="Footer-link-big-text block">{name}</span>
                 </a>
               </li>
             ))}
+            <li>
+              <button type="button" className={LINK_BIG}>
+                <span className="Footer-link-big-text block">Order</span>
+              </button>
+            </li>
           </ul>
         </nav>
 

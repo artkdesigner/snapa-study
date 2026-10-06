@@ -2,7 +2,11 @@ import { useRef } from 'react'
 import bigprintSm from '../assets/bigprint-1280.webp'
 import bigprintMd from '../assets/bigprint-2560.webp'
 import bigprintLg from '../assets/bigprint-3660.webp'
-import { BIGPRINT_ANIM_SVH, useBigPrintReveal } from '../lib/useBigPrintReveal'
+import {
+  BIGPRINT_ANIM_SVH,
+  BIGPRINT_REVEALED_SVH,
+  useBigPrintReveal,
+} from '../lib/useBigPrintReveal'
 import { useCoverOverlay } from '../lib/useCoverOverlay'
 
 const TITLE = 'Bigg prints'
@@ -36,6 +40,9 @@ function BigPrint() {
     // BigPrint-pin дошёл до конца, и стоит, пока на неё наезжает Choose.
     <section
       ref={rootRef}
+      id="bigprint"
+      // ссылка Prints в Footer ведёт к концу появления (scrollToSection)
+      data-anchor-offset={BIGPRINT_REVEALED_SVH}
       aria-labelledby="bigprint-title"
       style={{ height: `${SECTION_SVH}svh`, top: `${100 - SECTION_SVH}svh` }}
       className="BigPrint sticky z-40 bg-bg-primary text-accent"

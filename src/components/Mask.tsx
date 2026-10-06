@@ -73,6 +73,7 @@ function Mask() {
     // последнем слайде и стоит, пока на неё наезжает BigPrint.
     <section
       ref={rootRef}
+      id="mask"
       aria-label="Design details"
       style={{ height: `${SECTION_SVH}svh`, top: `${100 - SECTION_SVH}svh` }}
       className="Mask sticky z-30 bg-bg-primary text-primary"

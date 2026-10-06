@@ -15,6 +15,9 @@ export const BIGPRINT_ANIM_SVH = 200
 // Конец — через BIGPRINT_ANIM_SVH, то есть на столько же раньше конца
 // секции: остаток прокрутки собранная секция просто стоит.
 const START_VIEWPORT = 0.3
+// Где от верха секции (svh) появление закончено — сюда ведёт ссылка Prints
+// в Footer.
+export const BIGPRINT_REVEALED_SVH = BIGPRINT_ANIM_SVH - START_VIEWPORT * 100
 
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
 // Буквы заголовка — как Snapa в прелоудере: по очереди из-под маски, expo.out.

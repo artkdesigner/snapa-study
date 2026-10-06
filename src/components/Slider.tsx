@@ -73,6 +73,7 @@ function Slider() {
     // и стоит, пока на неё наезжает Mask.
     <section
       ref={rootRef}
+      id="slider"
       aria-labelledby="slider-title"
       style={{
         height: `${SECTION_SVH}svh`,
