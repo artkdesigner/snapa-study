@@ -18,7 +18,7 @@ import Polaroid from './Polaroid'
   движение» перехода нет: секция идёт обычным экраном после Choose, и
   видно этот полароид.
   Полароид: повёрнут на −5°, центр — от центра экрана со сдвигом из макета
-  (Mobile и Tablet — ниже, Desktop — ровно по центру).
+  (везде ниже центра, по горизонтали — по центру).
   Фото: кадр ~16:9 в портретной рамке упирается в высоту — sizes = высота
   рамки × пропорции файла.
 */
@@ -59,7 +59,7 @@ function Presets() {
         <div className="Presets-photo pointer-events-none absolute inset-0 z-4 flex items-center justify-center motion-safe:opacity-0">
           <Polaroid
             data-presets-polaroid
-            className="relative top-[5.1333rem] [transform:rotate(-5deg)] md:top-[4.4881rem] md:left-0 lg:top-0 lg:left-0"
+            className="relative top-[5.1333rem] [transform:rotate(-5deg)] md:top-[4.4881rem] md:left-0 lg:top-[3.32rem] lg:left-0"
           >
             <div className="Choose-mask-photo relative h-[20.25rem] w-[18rem] overflow-clip bg-bg-primary md:h-[29.6691rem] md:w-[26.3603rem] lg:h-[39.25rem] lg:w-[35rem]">
               <img
