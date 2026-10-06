@@ -21,7 +21,12 @@ import bgMobile from '../assets/footer-mobile.webp'
   под хвост «y»), буквы в ней — inline-block, выезжают снизу.
 */
 const MENU = ['Camera', 'Prints', 'Presets', 'Mobile App', 'Contact']
-const SOCIAL = ['Instagram', 'LinkedIn']
+// Главные страницы соцсетей (своих аккаунтов у Snapa нет); открываются в
+// новой вкладке.
+const SOCIAL = [
+  { name: 'Instagram', href: 'https://www.instagram.com/' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/' },
+]
 const TITLE_WORDS = ['Make', 'Moments', 'Physical']
 
 function Footer() {
@@ -135,9 +140,16 @@ function Footer() {
         <div className="Footer-social-wrap flex flex-col gap-2.5 pt-5 md:pt-15 lg:col-start-1 lg:row-start-2 lg:self-start lg:pt-0">
           <p className="Footer-social-title text-primary/40">Social media</p>
           <ul className="Footer-social-links flex flex-col items-start gap-1 md:flex-row md:gap-2.5">
-            {SOCIAL.map((item) => (
-              <li key={item}>
-                <a className="Footer-link-small block">{item}</a>
+            {SOCIAL.map(({ name, href }) => (
+              <li key={name}>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="Footer-link-small block"
+                >
+                  {name}
+                </a>
               </li>
             ))}
           </ul>
