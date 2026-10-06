@@ -188,8 +188,13 @@ function Steps() {
                 {/* Подпись свёрнута колонкой 0fr (остаётся именем кнопки
                     для скринридера), у активного на Desktop — 1fr */}
                 <span className="Steps-list-title grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] lg:group-aria-[current=step]:grid-cols-[1fr] lg:group-aria-[current=step]:opacity-100">
-                  <span className="min-w-0 overflow-hidden pl-2 whitespace-nowrap">
-                    {step.label}
+                  {/* отступ 8px от номера — внутри обрезки: padding на самой
+                      ячейке не даёт свернуть её в 0, лишние 8px добавлялись
+                      к gap между пунктами */}
+                  <span className="min-w-0 overflow-hidden">
+                    <span className="block pl-2 whitespace-nowrap">
+                      {step.label}
+                    </span>
                   </span>
                 </span>
               </button>
