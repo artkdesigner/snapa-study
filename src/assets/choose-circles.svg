@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 1020" fill="none" stroke="#fffdff" stroke-opacity=".2">
-  <!-- Choose-circle-big: 67 рисок 3.75×60 -->
-  <circle cx="510" cy="510" r="480" stroke-width="60" stroke-dasharray="3.75 41.2639" stroke-dashoffset="1.875"/>
-  <!-- Choose-circle-middle: 271 рисок 2×6 -->
-  <circle cx="510" cy="510" r="427" stroke-width="6" stroke-dasharray="2 7.9001" stroke-dashoffset="1.0"/>
-  <!-- Choose-circle-small: 107 рисок 2×30 -->
-  <circle cx="510" cy="510" r="365" stroke-width="30" stroke-dasharray="2 19.4333" stroke-dashoffset="1.0"/>
+  <!-- Choose-circle-big: 68 рисок 3.75×60, первая — на 3 часах -->
+  <circle cx="510" cy="510" r="480" stroke-width="60" stroke-dasharray="3.75 40.6019" stroke-dashoffset="1.875"/>
+  <!-- Choose-circle-middle: 272 рисок 2×6, первая — на 3 часах -->
+  <circle cx="510" cy="510" r="427" stroke-width="6" stroke-dasharray="2 7.8637" stroke-dashoffset="1"/>
+  <!-- Choose-circle-small: 108 рисок 2×30, первая — на 3 часах -->
+  <circle cx="510" cy="510" r="365" stroke-width="30" stroke-dasharray="2 19.2348" stroke-dashoffset="1"/>
 </svg>
