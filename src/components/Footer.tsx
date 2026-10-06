@@ -17,14 +17,16 @@ import bgMobile from '../assets/footer-mobile.webp'
   соцсети, почта, адрес (src/lib/useFooterReveal.ts); линии над меню,
   логотипом и текстом растут по ширине. Линия — отдельный span поверх
   прозрачной верхней рамки (рамка держит место в раскладке, как в Figma).
-  Слоган — кнопка (откроет Popup). Каждое слово — маска (обрезка только по вертикали, продлена вниз
-  под хвост «y»), буквы в ней — inline-block, выезжают снизу.
+  Слоган — кнопка (откроет Popup). Каждое слово — маска (обрезка только по
+  вертикали, продлена вниз под хвост «y»), буквы в ней — inline-block,
+  выезжают снизу.
+  Ссылки Footer-link-big (меню) и Footer-link-small (соцсети, почта): Hover
+  в Figma — opacity 70%; переход как у Button (Ease out 300ms) —
+  длительность из Figma не читается.
 */
 const MENU = ['Camera', 'Prints', 'Presets', 'Mobile App', 'Contact']
 // Главные страницы соцсетей (своих аккаунтов у Snapa нет); открываются в
 // новой вкладке.
-// Footer-link-small (соцсети и почта): Hover в Figma — opacity 70%; переход
-// как у Button (Ease out 300ms) — длительность из Figma не читается.
 const SOCIAL = [
   { name: 'Instagram', href: 'https://www.instagram.com/' },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/' },
@@ -121,7 +123,12 @@ function Footer() {
             {MENU.map((item) => (
               <li key={item}>
                 {/* Куда ведут пункты — пока не задано (placeholder-ссылки) */}
-                <a className="Footer-link-big block">{item}</a>
+                {/* Hover в Figma — opacity 70% (как Footer-link-small). Появление
+                    анимирует текст внутри: инлайн-opacity от GSAP на самой
+                    ссылке перебила бы hover. */}
+                <a className="Footer-link-big block transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70">
+                  <span className="Footer-link-big-text block">{item}</span>
+                </a>
               </li>
             ))}
           </ul>

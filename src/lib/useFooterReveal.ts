@@ -46,7 +46,7 @@ const START_VIEWPORT = 0.3
   Строки меню и текста делятся только на время анимации (как в
   useScrollLinesReveal), буквы слогана — постоянные span[data-letter].
   Ожидаются .Footer-title с [data-letter], .Footer-menu-title,
-  .Footer-link-big, .Footer-logo, .Footer-text, .Footer-social-wrap,
+  .Footer-link-big-text, .Footer-logo, .Footer-text, .Footer-social-wrap,
   .Footer-email-wrap, .Footer-location и линии .Footer-menu-line,
   .Footer-logo-line, .Footer-text-line (origin слева задан классом).
 */
@@ -60,7 +60,7 @@ export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
       gsap.utils.toArray<HTMLElement>(selector, root)
     const title = root.querySelector<HTMLElement>('.Footer-title')
     const letters = q('.Footer-title [data-letter]')
-    const menuTexts = q('.Footer-menu-title, .Footer-link-big')
+    const menuTexts = q('.Footer-menu-title, .Footer-link-big-text')
     const text = q('.Footer-text')
     const logo = q('.Footer-logo')
     const contacts = q(
