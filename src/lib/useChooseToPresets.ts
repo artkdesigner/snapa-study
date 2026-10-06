@@ -27,19 +27,30 @@ const TITLE_FADE_SPEED = 2
   1 — место полароида в Presets.
   rotation — наклон, градусы.
 */
-const FRAMES = [
+const DESKTOP_FRAMES = [
   { fly: 0, w: 0, h: 0, center: 0, rotation: 0 },
   { fly: 0.61, w: 0, h: 0, center: 0, rotation: 0 },
   { fly: 1, w: 0.172, h: 0, center: 1, rotation: -3 },
   { fly: 1, w: 0.619, h: 0.177, center: 1, rotation: -5 },
   { fly: 1, w: 1, h: 1, center: 1, rotation: -5 },
 ]
-type Frame = (typeof FRAMES)[number]
+type Frame = (typeof DESKTOP_FRAMES)[number]
 
-const frameAt = (progress: number): Frame => {
-  const pos = gsap.utils.clamp(0, 1, progress) * (FRAMES.length - 1)
-  const i = Math.min(Math.floor(pos), FRAMES.length - 2)
-  return gsap.utils.interpolate(FRAMES[i], FRAMES[i + 1], pos - i)
+// Mobile/Tablet (по просьбе пользователя): разъезд тот же, но с кадра 02 до
+// 05 наклон и превращение в фотографию идут одновременно — размер, место и
+// наклон вместе, равномерно.
+const COMPACT_FRAMES: Frame[] = [
+  { fly: 0, w: 0, h: 0, center: 0, rotation: 0 },
+  { fly: 0.61, w: 0, h: 0, center: 0, rotation: 0 },
+  { fly: 1, w: 1 / 3, h: 1 / 3, center: 1 / 3, rotation: -5 / 3 },
+  { fly: 1, w: 2 / 3, h: 2 / 3, center: 2 / 3, rotation: -10 / 3 },
+  { fly: 1, w: 1, h: 1, center: 1, rotation: -5 },
+]
+
+const frameAt = (frames: Frame[], progress: number): Frame => {
+  const pos = gsap.utils.clamp(0, 1, progress) * (frames.length - 1)
+  const i = Math.min(Math.floor(pos), frames.length - 2)
+  return gsap.utils.interpolate(frames[i], frames[i + 1], pos - i)
 }
 
 const lerp = (from: number, to: number, t: number) => from + (to - from) * t
@@ -54,7 +65,7 @@ const lerp = (from: number, to: number, t: number) => from + (to - from) * t
   ([data-presets-polaroid], он прозрачный — мишень). Заголовок и декор
   Choose: на Desktop разъезжаются за края влево и вправо; на Mobile/Tablet
   декор уезжает вниз, а заголовок стоит на месте и гаснет до 0.
-  Mobile/Tablet идут по тем же кадрам, что Desktop.
+  Mobile/Tablet — по своим кадрам (COMPACT_FRAMES).
   Всё пишется инлайном на каждый шаг скролла по замерам (refresh): размер
   экрана, поля полароида, размер и центр мишени.
 */
@@ -115,7 +126,8 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
 
     const render = (progress: number) => {
       if (!m) return
-      const f = frameAt(progress)
+      const frames = m.desktop ? DESKTOP_FRAMES : COMPACT_FRAMES
+      const f = frameAt(frames, progress)
       const w = lerp(m.stageW, m.endW, f.w)
       const h = lerp(m.stageH, m.endH, f.h)
       // Полароид стоит в Choose-stage со сдвигом на −поля (фото = экран);
@@ -139,7 +151,7 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
         // декор вниз»: колонка прижата к низу, заголовок над декором.
         const titleBottom = h - m.decH - m.gap
         const shift = (Math.max(titleBottom, m.decH) + m.flyExtra) * f.fly
-        const fade = frameAt(progress * TITLE_FADE_SPEED).fly
+        const fade = frameAt(frames, progress * TITLE_FADE_SPEED).fly
         gsap.set(title, { x: 0, y: 0, opacity: 1 - fade })
         gsap.set(decoration, { x: 0, y: shift })
       }
