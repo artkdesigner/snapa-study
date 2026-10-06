@@ -70,3 +70,23 @@ export function splitLines(el: HTMLElement): SplitLinesResult {
     revert: () => el.replaceChildren(...original),
   }
 }
+
+/*
+  Делит строку из splitLines на буквы: каждая — inline-block (её можно
+  двигать), пробелы остаются текстом между ними, поэтому ширина строки не
+  меняется. Возвращает буквы по порядку. Исходный текст возвращает revert()
+  самого splitLines — он заменяет строки целиком.
+*/
+export function splitLetters(line: HTMLElement): HTMLElement[] {
+  const letters: HTMLElement[] = []
+  const nodes = Array.from(line.textContent ?? '').map((char) => {
+    if (/\s/.test(char)) return document.createTextNode(char)
+    const letter = document.createElement('span')
+    letter.style.display = 'inline-block'
+    letter.textContent = char
+    letters.push(letter)
+    return letter
+  })
+  line.replaceChildren(...nodes)
+  return letters
+}

@@ -1,4 +1,5 @@
 import { useRef, type ReactNode } from 'react'
+import { useScrollLinesReveal } from '../lib/useScrollLinesReveal'
 import { useScrollSteps } from '../lib/useScrollSteps'
 import frame from '../assets/steps-phone-frame.webp'
 import screenHome from '../assets/steps-screen-0.webp'
@@ -90,6 +91,9 @@ const SECTION_SVH = STEPS.length * 100 + 100 + HOLD_SVH
 function Steps() {
   const rootRef = useRef<HTMLElement>(null)
   useScrollSteps(rootRef)
+  // Наехала на Presets на 70% — заголовок побуквенно (строка за строкой),
+  // за ним подзаголовок построчно; назад — всё разом уезжает под маски.
+  useScrollLinesReveal(rootRef)
 
   return (
     <section
@@ -104,6 +108,7 @@ function Steps() {
               как Desktop (Title/88/Desktop) */}
           <h2
             id="steps-title"
+            data-reveal-letters
             className="Steps-title text-[3rem] leading-none tracking-[-0.07em] md:text-headline-lg lg:whitespace-nowrap"
           >
             Control <br className="hidden lg:inline" />
@@ -111,7 +116,10 @@ function Steps() {
             Shoot <br className="hidden md:inline" />
             from your Phone
           </h2>
-          <p className="Steps-sub w-[15.8125rem] text-lead-sm md:w-[21.75rem] md:text-lead-lg">
+          <p
+            data-reveal-lines
+            className="Steps-sub w-[15.8125rem] text-lead-sm md:w-[21.75rem] md:text-lead-lg"
+          >
             Snapa connects to a mobile app for iOS and Android, turning your
             smartphone into a remote viewfinder and control center.
           </p>
