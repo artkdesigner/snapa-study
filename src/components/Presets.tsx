@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import photoSm from '../assets/choose-4-1920.webp'
 import photoLg from '../assets/choose-4-2912.webp'
 import { CHOOSE_TO_PRESETS_SCREENS } from '../lib/useChooseToPresets'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 import Polaroid from './Polaroid'
 
 /*
@@ -19,6 +20,9 @@ import Polaroid from './Polaroid'
   видно этот полароид.
   Полароид: повёрнут на −5°, центр — от центра экрана со сдвигом из макета
   (везде ниже центра, по горизонтали — по центру).
+  В конце секция сама прилипает (sticky, top = экран минус её высота), и на
+  неё наезжает Steps — Presets-overlay затемняет её по мере накрытия
+  (src/lib/useCoverOverlay.ts).
   Фото: кадр ~16:9 в портретной рамке упирается в высоту — sizes = высота
   рамки × пропорции файла.
 */
@@ -28,11 +32,17 @@ const PHOTO_SIZES =
 const OVERLAP = { '--overlap': `${(CHOOSE_TO_PRESETS_SCREENS + 1) * 100}svh` }
 
 function Presets() {
+  const rootRef = useRef<HTMLElement>(null)
+  useCoverOverlay(rootRef)
+
   return (
+    // sticky с top = экран минус высота секции: прилипает, когда Presets-pin
+    // дошёл до её конца, и стоит, пока наезжает Steps
     <section
+      ref={rootRef}
       aria-labelledby="presets-title"
       style={OVERLAP as CSSProperties}
-      className="Presets relative isolate z-45 h-svh bg-bg-primary text-accent motion-safe:-mt-(--overlap) motion-safe:h-(--overlap)"
+      className="Presets sticky top-0 isolate z-45 h-svh bg-bg-primary text-accent motion-safe:-mt-(--overlap) motion-safe:top-[calc(100svh-var(--overlap))] motion-safe:h-(--overlap)"
     >
       <div className="Presets-pin sticky top-0 flex h-svh flex-col justify-between overflow-clip px-2.5 py-5 md:px-5 md:py-15 lg:p-7.5">
         <h2
@@ -85,6 +95,14 @@ function Presets() {
             A real photograph you can hold, keep, and share.
           </p>
         </div>
+
+        {/* внутри прилипшего Presets-pin, над полароидом — затемняет
+            видимый экран, пока наезжает Steps */}
+        <div
+          aria-hidden="true"
+          data-cover-overlay
+          className="Presets-overlay pointer-events-none absolute inset-0 z-5 bg-dark opacity-0"
+        />
       </div>
     </section>
   )

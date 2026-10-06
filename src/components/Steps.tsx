@@ -9,9 +9,12 @@ import screenGallery from '../assets/steps-screen-4.webp'
 
 /*
   Шаги работы с приложением: заголовок секции, по центру — телефон, внизу —
-  номера шагов. Скролл с пином (src/lib/useScrollSteps.ts) по очереди
+  номера шагов. Наезжает на прилипший Presets (z выше, Presets
+  затемняется). Скролл с пином (src/lib/useScrollSteps.ts) по очереди
   показывает 4 шага: экран телефона, блок шага (заголовок + описание) и
   активный номер с подписью.
+  Экраны телефона — своим слоем (isolate), их z-index стопки не выходят
+  наружу: рамка (z-1) всегда поверх экрана.
   Mobile: колонка — заголовок, телефон, номера; блоков шагов нет (в макете
   скрыты). Tablet: заголовок сверху по центру, телефон по центру экрана
   чуть ниже середины, номера справа внизу, блок шага слева внизу.
@@ -93,7 +96,7 @@ function Steps() {
       ref={rootRef}
       aria-labelledby="steps-title"
       style={{ height: `${SECTION_SVH}svh` }}
-      className="Steps relative bg-bg-primary text-accent"
+      className="Steps relative z-50 bg-bg-primary text-accent"
     >
       <div className="Steps-pin sticky top-0 flex h-svh flex-col items-center justify-between overflow-clip">
         <div className="Steps-title-wrap flex flex-col items-center gap-5 px-2.5 pt-10 text-center md:px-0 md:pt-5 lg:absolute lg:inset-y-0 lg:left-7.5 lg:items-start lg:justify-center lg:gap-7.5 lg:pt-0 lg:text-left">
@@ -118,7 +121,7 @@ function Steps() {
             низких экранах сжимается). Tablet/Desktop: по центру экрана. */}
         <div className="Steps-phone-wrap flex min-h-0 w-full flex-1 items-center justify-center md:pointer-events-none md:absolute md:inset-0">
           <div className="Steps-phone @container relative aspect-[340/700] h-full max-h-[23.75rem] md:top-[2.375rem] md:h-[31.25rem] md:max-h-none lg:top-0 lg:h-[43.75rem]">
-            <div className="Steps-phone-content absolute inset-[1.4107%_3.8991%_1.6364%_3.9958%] overflow-clip rounded-[10.049cqw] bg-primary">
+            <div className="Steps-phone-content absolute isolate inset-[1.4107%_3.8991%_1.6364%_3.9958%] overflow-clip rounded-[10.049cqw] bg-primary">
               {SCREENS.map((screen, i) => (
                 <img
                   key={screen.src}
@@ -140,7 +143,7 @@ function Steps() {
               loading="lazy"
               decoding="async"
               draggable={false}
-              className="Steps-phone-frame pointer-events-none absolute top-[-1.1407%] left-[-1.4836%] block h-[102.032%] w-[102.749%] max-w-none"
+              className="Steps-phone-frame pointer-events-none absolute z-1 top-[-1.1407%] left-[-1.4836%] block h-[102.032%] w-[102.749%] max-w-none"
             />
           </div>
         </div>

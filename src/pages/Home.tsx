@@ -46,8 +46,15 @@ function Home() {
           <BigPrint />
           <Choose />
         </div>
-        <Presets />
-        <Steps />
+        {/* Вторая стопка: на прилипший Presets наезжает Steps. Отдельная
+            обёртка ограничивает прилипание Presets — дальше уезжает вместе
+            со Steps. Отрицательный margin Presets (наложение на конец Choose)
+            схлопывается с обёрткой, поэтому её верх = верх Presets
+            (flowTop считает от него). */}
+        <div className="Cover-stack">
+          <Presets />
+          <Steps />
+        </div>
       </main>
     </>
   )
