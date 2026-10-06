@@ -167,7 +167,9 @@ function Steps() {
               {/* клик — прокрутить к этому шагу (useScrollSteps) */}
               <button
                 type="button"
-                className="Steps-list-button flex cursor-pointer items-center text-lead-lg"
+                // номер и подпись: Mobile/Tablet Body/16 14/1.3, Desktop 16/1.1;
+                // цвет подписи — Accent 100% (наследуется от секции)
+                className="Steps-list-button flex cursor-pointer items-center text-lead-sm lg:text-lead-lg"
               >
                 <span className="Steps-list-number-wrap flex size-[2.125rem] shrink-0 items-center justify-center rounded-full border-[0.125rem] border-accent/40 text-accent/40 transition-colors duration-300 ease-[cubic-bezier(0,0,0.58,1)] group-aria-[current=step]:border-accent group-aria-[current=step]:text-accent">
                   {String(i + 1).padStart(2, '0')}
