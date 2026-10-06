@@ -66,6 +66,8 @@ const lerp = (from: number, to: number, t: number) => from + (to - from) * t
   Choose: на Desktop разъезжаются за края влево и вправо; на Mobile/Tablet
   декор уезжает вниз, а заголовок стоит на месте и гаснет до 0.
   Mobile/Tablet — по своим кадрам (COMPACT_FRAMES).
+  В конце перехода полароид Choose подменяется полароидом Presets (он на
+  том же месте): Choose уезжает, а Presets прилипает под наезд Steps.
   Всё пишется инлайном на каждый шаг скролла по замерам (refresh): размер
   экрана, поля полароида, размер и центр мишени.
 */
@@ -86,6 +88,7 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
     )
     const targetPhoto = target?.querySelector<HTMLElement>('.Choose-mask-photo')
     const presetsPin = target?.closest<HTMLElement>('.Presets-pin')
+    const presetsPhoto = target?.closest<HTMLElement>('.Presets-photo')
     if (
       !stage ||
       !polaroid ||
@@ -94,7 +97,8 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
       !decoration ||
       !target ||
       !targetPhoto ||
-      !presetsPin
+      !presetsPin ||
+      !presetsPhoto
     )
       return
 
@@ -138,6 +142,13 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
       const y = lerp((m.stageH + m.extra) / 2 - m.pad, m.endY, f.center)
       gsap.set(pin, { width: w, height: h })
       gsap.set(polaroid, { x: x - restX, y: y - restY, rotation: f.rotation })
+      // В конце полароид Choose лёг ровно на мишень — дальше вместо него
+      // свой полароид Presets: Choose уезжает вверх, а Presets прилипает (на
+      // него наезжает Steps), полароид должен остаться на месте и
+      // затемняться вместе с секцией.
+      const landed = progress >= 1
+      gsap.set(polaroid, { visibility: landed ? 'hidden' : 'visible' })
+      gsap.set(presetsPhoto, { opacity: landed ? 1 : 0 })
 
       if (m.desktop) {
         // заголовок прижат к левому краю, декор — к правому
@@ -182,7 +193,9 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
     return () => {
       ctx.revert()
       gsap.set(pin, { clearProps: 'width,height' })
-      gsap.set([polaroid, decoration], { clearProps: 'transform' })
+      gsap.set(polaroid, { clearProps: 'transform,visibility' })
+      gsap.set(decoration, { clearProps: 'transform' })
+      gsap.set(presetsPhoto, { clearProps: 'opacity' })
       gsap.set(title, { clearProps: 'transform,opacity' })
     }
   }, [rootRef])
