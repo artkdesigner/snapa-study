@@ -23,6 +23,10 @@ import choose4Lg from '../assets/choose-4-2912.webp'
   уменьшенный в 0.7137 раза (так в Figma, отсюда дробные размеры), цифры не
   повёрнуты. На Mobile заголовок в Figma прозрачный (opacity 0).
   Шкала — SVG по замерам из Figma (число и ширина рисок у каждого круга).
+  У всех трёх кругов риска стоит ровно на 3 часах (начало круга в SVG), а
+  золотые полоски счётчика по длине и отступам совпадают с толщиной колец —
+  поэтому шкала повёрнута так, чтобы эта риска легла под полоски: на
+  Desktop — на 9 часов (180°), на Mobile/Tablet — на 12 часов (−90°).
   Картинки: object-cover по центру; кадры разных пропорций, поэтому sizes —
   ширина отрисованного кадра: max(ширина экрана, высота × пропорции файла).
 */
@@ -133,7 +137,7 @@ function Choose() {
             src={circles}
             alt=""
             draggable={false}
-            className="Choose-circle-wrap pointer-events-none absolute top-[3.25rem] left-1/2 z-2 block size-[45.5rem] max-w-none -translate-x-1/2 rotate-90 lg:top-1/2 lg:right-[-38.75rem] lg:left-auto lg:size-[63.75rem] lg:translate-x-0 lg:-translate-y-1/2"
+            className="Choose-circle-wrap pointer-events-none absolute top-[3.25rem] left-1/2 z-2 block size-[45.5rem] max-w-none -translate-x-1/2 -rotate-90 lg:top-1/2 lg:right-[-38.75rem] lg:left-auto lg:size-[63.75rem] lg:translate-x-0 lg:-translate-y-1/2 lg:rotate-180"
           />
 
           <div
