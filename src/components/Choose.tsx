@@ -133,7 +133,7 @@ function Choose() {
             src={circles}
             alt=""
             draggable={false}
-            className="Choose-circle-wrap pointer-events-none absolute top-[3.25rem] left-1/2 z-2 block size-[45.5rem] max-w-none -translate-x-1/2 lg:top-1/2 lg:right-[-38.75rem] lg:left-auto lg:size-[63.75rem] lg:translate-x-0 lg:-translate-y-1/2"
+            className="Choose-circle-wrap pointer-events-none absolute top-[3.25rem] left-1/2 z-2 block size-[45.5rem] max-w-none -translate-x-1/2 rotate-90 lg:top-1/2 lg:right-[-38.75rem] lg:left-auto lg:size-[63.75rem] lg:translate-x-0 lg:-translate-y-1/2"
           />
 
           <div
