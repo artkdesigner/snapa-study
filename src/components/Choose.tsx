@@ -146,7 +146,7 @@ function Choose() {
 
           {/* Desktop: коробка 48×288, в ней окно названия, повёрнутое на 90° */}
           <div className="Choose-slider-title-box absolute bottom-[1.25rem] left-1/2 z-3 -translate-x-1/2 md:bottom-[1.625rem] lg:static lg:flex lg:h-[18rem] lg:w-[3rem] lg:translate-x-0 lg:items-center lg:justify-center">
-            <div className="Choose-slider-title-wrap h-[2.25rem] shrink-0 overflow-clip rounded-full text-center text-heading-md whitespace-nowrap lg:h-[3rem] lg:rotate-90 lg:text-heading-lg">
+            <div className="Choose-slider-title-wrap h-[2.25rem] shrink-0 overflow-clip text-center text-heading-md whitespace-nowrap lg:h-[3rem] lg:rotate-90 lg:text-heading-lg">
               <ul
                 data-choose-track
                 className="flex flex-col items-center gap-2.5"
