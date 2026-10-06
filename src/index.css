@@ -17,6 +17,8 @@
   --breakpoint-lg: 62rem;
 
   --font-sans: 'General Sans', ui-sans-serif, system-ui, sans-serif;
+  /* рукописная подпись на полароиде (Presets) */
+  --font-script: 'Kobzar KS', cursive;
 
   /* Text/Primary 100% (80% и 40% — через модификатор: text-primary/80) */
   --color-primary: #fffdff;

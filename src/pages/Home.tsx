@@ -5,6 +5,7 @@ import Hero from '../components/Hero'
 import Intro from '../components/Intro'
 import Mask from '../components/Mask'
 import Preloader from '../components/Preloader'
+import Presets from '../components/Presets'
 import Slider from '../components/Slider'
 import type { HeroReveal } from '../lib/useHeroReveal'
 import { restoreScroll } from '../lib/scrollMemory'
@@ -44,6 +45,7 @@ function Home() {
           <BigPrint />
           <Choose />
         </div>
+        <Presets />
       </main>
     </>
   )
