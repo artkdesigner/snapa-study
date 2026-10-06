@@ -19,7 +19,6 @@ const START_VIEWPORT = 0.3
 
 /*
   Когда верх секции доскроллили до START_VIEWPORT, строки всех [data-reveal-lines]
-  (и буквы [data-reveal-letters] — по одной, строка за строкой)
   выезжают снизу из-под масок — одной общей очередью по порядку разметки
   (строки следующего блока продолжают stagger предыдущего). При скролле
   назад выше этой точки все строки сразу и одновременно уезжают обратно (не
@@ -34,10 +33,7 @@ export function useScrollLinesReveal(rootRef: RefObject<HTMLElement | null>) {
     if (!root) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const texts = gsap.utils.toArray<HTMLElement>(
-      '[data-reveal-lines], [data-reveal-letters]',
-      root,
-    )
+    const texts = gsap.utils.toArray<HTMLElement>('[data-reveal-lines]', root)
     if (!texts.length) return
 
     // Пока идёт анимация в любую сторону — тексты поделены на строки; смена

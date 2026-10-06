@@ -91,8 +91,8 @@ const SECTION_SVH = STEPS.length * 100 + 100 + HOLD_SVH
 function Steps() {
   const rootRef = useRef<HTMLElement>(null)
   useScrollSteps(rootRef)
-  // Наехала на Presets на 70% — заголовок побуквенно (строка за строкой),
-  // за ним подзаголовок построчно; назад — всё разом уезжает под маски.
+  // Наехала на Presets на 70% — заголовок и за ним подзаголовок выезжают
+  // построчно одной очередью; назад — всё разом уезжает под маски.
   useScrollLinesReveal(rootRef)
 
   return (
@@ -108,7 +108,7 @@ function Steps() {
               как Desktop (Title/88/Desktop) */}
           <h2
             id="steps-title"
-            data-reveal-letters
+            data-reveal-lines
             className="Steps-title text-[3rem] leading-none tracking-[-0.07em] md:text-headline-lg lg:whitespace-nowrap"
           >
             Control <br className="hidden lg:inline" />
