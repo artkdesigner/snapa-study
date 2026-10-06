@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import BigPrint from '../components/BigPrint'
+import Choose from '../components/Choose'
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
 import Mask from '../components/Mask'
@@ -38,6 +39,7 @@ function Home() {
           <Mask />
           <BigPrint />
         </div>
+        <Choose />
       </main>
     </>
   )
