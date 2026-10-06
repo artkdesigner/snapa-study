@@ -1,5 +1,6 @@
 import { Fragment, useRef } from 'react'
 import { scrollToSection } from '../lib/scrollToSection'
+import FooterClock from './FooterClock'
 import { useCoverZoom } from '../lib/useCoverZoom'
 import { useFooterReveal } from '../lib/useFooterReveal'
 import logo from '../assets/logo.svg'
@@ -207,7 +208,7 @@ function Footer() {
           </p>
           {/* Desktop — в строку */}
           <address className="Footer-location-list flex flex-col gap-0.5 not-italic lg:flex-row lg:gap-2.5">
-            <span className="Footer-time">09:49:47 AM</span>
+            <FooterClock className="Footer-time" />
             <span className="Footer-adress">807 S Los Angeles St</span>
           </address>
         </div>
