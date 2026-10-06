@@ -12,6 +12,8 @@ export const CHOOSE_TO_PRESETS_SCREENS = 2
 
 // Запас пути заголовка и декора сверх их размера (100px макета), rem.
 const FLY_EXTRA_REM = 6.25
+// Mobile/Tablet: во сколько раз быстрее разъезда гаснет заголовок.
+const TITLE_FADE_SPEED = 2
 
 /*
   Кадры раскадровки «Choose to Presets 01–05» (Desktop), равномерно по
@@ -131,12 +133,14 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
         gsap.set(title, { x: -shift, y: 0, opacity: 1 })
         gsap.set(decoration, { x: shift, y: 0 })
       } else {
-        // Заголовок стоит на месте и гаснет (по просьбе пользователя), декор
+        // Заголовок стоит на месте и гаснет по кривой fly, но вдвое быстрее
+        // (к кадру 02, а не 03) — по просьбе пользователя. Декор
         // уезжает вниз — на тот же путь, что был у пары «заголовок вверх,
         // декор вниз»: колонка прижата к низу, заголовок над декором.
         const titleBottom = h - m.decH - m.gap
         const shift = (Math.max(titleBottom, m.decH) + m.flyExtra) * f.fly
-        gsap.set(title, { x: 0, y: 0, opacity: 1 - f.fly })
+        const fade = frameAt(progress * TITLE_FADE_SPEED).fly
+        gsap.set(title, { x: 0, y: 0, opacity: 1 - fade })
         gsap.set(decoration, { x: 0, y: shift })
       }
     }
