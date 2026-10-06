@@ -44,17 +44,12 @@ function Presets() {
         </h2>
 
         <div className="Presets-top relative z-2 flex items-start justify-between text-body md:text-body-md lg:text-body-lg">
-          {/* На Desktop в макете другой текст (тот же, что слева внизу),
-              строки — как в Figma */}
-          <p className="Presets-top-left w-[10rem] md:w-[14.25rem] lg:w-[22.9375rem]">
-            <span className="lg:hidden">
-              More space for detail, faces, and atmosphere in every photograph.
-            </span>
-            <span className="hidden whitespace-nowrap lg:inline">
-              The scale makes faces, places, and
-              <br />
-              moments feel more present and tangible.
-            </span>
+          {/* На Desktop строки — как в Figma: первая занимает почти всю
+              ширину и могла бы перенестись иначе (br только на Desktop) */}
+          <p className="Presets-top-left w-[10rem] md:w-[14.25rem] lg:w-[18.4375rem] lg:whitespace-nowrap">
+            More space for detail, faces, and{' '}
+            <br className="hidden lg:inline" />
+            atmosphere in every photograph.
           </p>
           <p className="Presets-top-right w-[10rem] text-right md:w-[14.25rem] lg:w-[18.5rem]">
             Natural tones and balanced contrast that stay vivid over time.
@@ -82,17 +77,9 @@ function Presets() {
         </div>
 
         <div className="Presets-bottom relative z-1 flex items-start justify-between text-body md:text-body-md lg:text-body-lg">
-          {/* На Desktop в макете другой текст; строки — как в Figma: вторая
-              занимает почти всю ширину и могла бы перенестись сама */}
-          <p className="Presets-bottom-left w-[10rem] md:w-[12.75rem] lg:w-[25rem]">
-            <span className="lg:hidden">
-              Thick, tactile paper designed to feel as good as it looks.
-            </span>
-            <span className="hidden whitespace-nowrap lg:inline">
-              The scale makes faces, places, and
-              <br />
-              moments feel more present and tangible.
-            </span>
+          <p className="Presets-bottom-left w-[10rem] md:w-[12.75rem] lg:w-[16.125rem] lg:whitespace-nowrap">
+            Thick, tactile paper designed <br className="hidden lg:inline" />
+            to feel as good as it looks.
           </p>
           <p className="Presets-bottom-right w-[8.875rem] text-right md:w-[11.25rem] lg:w-[14.5rem]">
             A real photograph you can hold, keep, and share.
