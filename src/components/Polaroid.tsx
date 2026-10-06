@@ -8,8 +8,9 @@ type Props = HTMLAttributes<HTMLDivElement> & {
 }
 
 /*
-  Полароид (Choose-mask в Figma): белая карточка с текстурой бумаги (20%),
-  внутри — окно фото (children) и рукописная подпись Kobzar KS снизу.
+  Полароид (Choose-mask в Figma): белая карточка с текстурой бумаги (её 20%
+  уже зашиты в альфу файла — отдельная opacity не нужна), внутри — окно фото
+  (children) и рукописная подпись Kobzar KS снизу.
   Поля, подпись и тень — одного размера при любом размере фото: в переходе
   Choose → Presets меняется только окно фото. Тень пропорциональна размеру
   карточки в Presets. Положение и поворот задаёт тот, кто вставляет.
@@ -31,7 +32,7 @@ function Polaroid({
         loading="lazy"
         decoding="async"
         draggable={false}
-        className="Choose-mask-paper pointer-events-none absolute inset-0 block size-full max-w-none object-cover opacity-20"
+        className="Choose-mask-paper pointer-events-none absolute inset-0 block size-full max-w-none object-cover"
       />
       {children}
       <p

@@ -10,13 +10,17 @@ gsap.registerPlugin(ScrollTrigger)
 // Presets на её конец (Choose.tsx, Presets.tsx) считаются от этого.
 export const CHOOSE_TO_PRESETS_SCREENS = 2
 
+// Запас пути заголовка и декора сверх их размера (100px макета), rem.
+const FLY_EXTRA_REM = 6.25
+
 /*
   Кадры раскадровки «Choose to Presets 01–05» (Desktop), равномерно по
   переходу; между кадрами — линейно (плавность даёт Lenis).
   fly — заголовок и декор Choose уехали за края (0…1).
   w, h — окно фото: 0 — весь экран, 1 — фото полароида в Presets; ширина и
-  высота идут по-разному: в кадре 03 фото уже, но выше экрана (−1.119 —
-  выше на столько же), к 05 становится портретным.
+  высота идут по-разному: в кадре 03 фото уже, высота ещё как у экрана, к 05
+  становится портретным. В макете высота в кадре 03 больше экрана — фото
+  на наклоне сначала росло; по просьбе пользователя убрано (h: 0).
   center — центр полароида: 0 — фото ровно на экране (рамка за краями),
   1 — место полароида в Presets.
   rotation — наклон, градусы.
@@ -24,7 +28,7 @@ export const CHOOSE_TO_PRESETS_SCREENS = 2
 const FRAMES = [
   { fly: 0, w: 0, h: 0, center: 0, rotation: 0 },
   { fly: 0.61, w: 0, h: 0, center: 0, rotation: 0 },
-  { fly: 1, w: 0.172, h: -1.119, center: 1, rotation: -3 },
+  { fly: 1, w: 0.172, h: 0, center: 1, rotation: -3 },
   { fly: 1, w: 0.619, h: 0.177, center: 1, rotation: -5 },
   { fly: 1, w: 1, h: 1, center: 1, rotation: -5 },
 ]
@@ -96,6 +100,9 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
         endX: t.left + t.width / 2 - p.left,
         endY: t.top + t.height / 2 - p.top,
         desktop: window.matchMedia('(min-width: 62rem)').matches,
+        flyExtra:
+          FLY_EXTRA_REM *
+          parseFloat(getComputedStyle(document.documentElement).fontSize),
         titleW: title.offsetWidth,
         decW: decoration.offsetWidth,
         decH: decoration.offsetHeight,
@@ -120,13 +127,13 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
 
       if (m.desktop) {
         // заголовок прижат к левому краю, декор — к правому
-        const shift = Math.max(m.titleW, m.decW) * f.fly
+        const shift = (Math.max(m.titleW, m.decW) + m.flyExtra) * f.fly
         gsap.set(title, { x: -shift, y: 0 })
         gsap.set(decoration, { x: shift, y: 0 })
       } else {
         // колонка прижата к низу: декор внизу, заголовок над ним
         const titleBottom = h - m.decH - m.gap
-        const shift = Math.max(titleBottom, m.decH) * f.fly
+        const shift = (Math.max(titleBottom, m.decH) + m.flyExtra) * f.fly
         gsap.set(title, { x: 0, y: -shift })
         gsap.set(decoration, { x: 0, y: shift })
       }
