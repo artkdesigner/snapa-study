@@ -1,4 +1,5 @@
 import { useRef, type ReactNode } from 'react'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 import { useScrollLinesReveal } from '../lib/useScrollLinesReveal'
 import { useScrollSteps } from '../lib/useScrollSteps'
 import frame from '../assets/steps-phone-frame.webp'
@@ -11,7 +12,7 @@ import screenGallery from '../assets/steps-screen-4.webp'
 /*
   Шаги работы с приложением: заголовок секции, по центру — телефон, внизу —
   номера шагов. Наезжает на прилипший Presets (z выше, Presets
-  затемняется). Скролл с пином (src/lib/useScrollSteps.ts) по очереди
+  затемняется), сам прилипает в конце — на него наезжает Footer. Скролл с пином (src/lib/useScrollSteps.ts) по очереди
   показывает 4 шага: экран телефона, блок шага (заголовок + описание) и
   активный номер с подписью.
   Экраны телефона — своим слоем (isolate), их z-index стопки не выходят
@@ -110,13 +111,21 @@ function Steps() {
   // Наехала на Presets на 70% — заголовок и за ним подзаголовок выезжают
   // построчно одной очередью; назад — всё разом уезжает под маски.
   useScrollLinesReveal(rootRef)
+  // На прилипший Steps наезжает Footer — Steps-overlay затемняет его.
+  useCoverOverlay(rootRef)
 
   return (
+    // Сама секция тоже sticky, с top = экран минус её высота: прилипает,
+    // когда последний экран (Steps-pin на последнем шаге) дошёл до низа, и
+    // стоит, пока на неё наезжает Footer.
     <section
       ref={rootRef}
       aria-labelledby="steps-title"
-      style={{ height: `${SECTION_SVH}svh` }}
-      className="Steps relative z-50 bg-bg-primary text-accent"
+      style={{
+        height: `${SECTION_SVH}svh`,
+        top: `${100 - SECTION_SVH}svh`,
+      }}
+      className="Steps sticky z-50 bg-bg-primary text-accent"
     >
       <div className="Steps-pin sticky top-0 flex h-svh flex-col items-center justify-between overflow-clip">
         <div className="Steps-title-wrap flex flex-col items-center gap-5 px-2.5 pt-10 text-center md:px-0 md:pt-5 lg:absolute lg:inset-y-0 lg:left-7.5 lg:items-start lg:justify-center lg:gap-7.5 lg:pt-0 lg:text-left">
@@ -222,6 +231,13 @@ function Steps() {
             </li>
           ))}
         </ol>
+
+        {/* внутри прилипшего Steps-pin — затемняет видимый экран */}
+        <div
+          aria-hidden="true"
+          data-cover-overlay
+          className="Steps-overlay pointer-events-none absolute inset-0 z-10 bg-dark opacity-0"
+        />
       </div>
     </section>
   )
