@@ -118,7 +118,7 @@ function Mask() {
         <div
           aria-hidden="true"
           data-cover-overlay
-          className="Mask-overlay pointer-events-none absolute inset-0 z-10 bg-black opacity-0"
+          className="Mask-overlay pointer-events-none absolute inset-0 z-10 bg-dark opacity-0"
         />
       </div>
     </section>

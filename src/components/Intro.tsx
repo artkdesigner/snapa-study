@@ -45,7 +45,7 @@ function Intro() {
       <div
         aria-hidden="true"
         data-cover-overlay
-        className="Intro-overlay pointer-events-none absolute inset-0 bg-black opacity-0"
+        className="Intro-overlay pointer-events-none absolute inset-0 bg-dark opacity-0"
       />
     </section>
   )

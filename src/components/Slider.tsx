@@ -145,7 +145,7 @@ function Slider() {
         <div
           aria-hidden="true"
           data-cover-overlay
-          className="Slider-overlay pointer-events-none absolute inset-0 bg-black opacity-0"
+          className="Slider-overlay pointer-events-none absolute inset-0 bg-dark opacity-0"
         />
       </div>
     </section>

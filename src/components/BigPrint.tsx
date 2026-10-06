@@ -4,7 +4,7 @@ import bigprintMd from '../assets/bigprint-2560.webp'
 import bigprintLg from '../assets/bigprint-3660.webp'
 import { BIGPRINT_ANIM_SVH, useBigPrintReveal } from '../lib/useBigPrintReveal'
 
-const TITLE = 'Big prints'
+const TITLE = 'Bigg prints'
 
 /*
   Большие отпечатки: наезжает поверх прилипшего Mask (z-40). Секция выше
@@ -35,7 +35,6 @@ function BigPrint() {
     >
       <div className="BigPrint-pin sticky top-0 flex h-svh flex-col items-center gap-15 px-2.5 py-10 md:px-5 md:py-15 lg:flex-row lg:items-end lg:gap-7.5 lg:p-7.5">
         <div className="BigPrint-left flex w-full flex-col items-center gap-10 text-center lg:h-full lg:flex-1 lg:items-start lg:justify-between lg:gap-0 lg:text-left">
-          {/* «Bigg prints» в Figma — опечатка */}
           <h2
             id="bigprint-title"
             aria-label={TITLE}

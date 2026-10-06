@@ -108,7 +108,7 @@ function Hero({ titleRef, reveal = 'static' }: HeroProps) {
       <div
         aria-hidden="true"
         data-cover-overlay
-        className="Hero-overlay pointer-events-none absolute inset-0 bg-black opacity-0"
+        className="Hero-overlay pointer-events-none absolute inset-0 bg-dark opacity-0"
       />
     </section>
   )
