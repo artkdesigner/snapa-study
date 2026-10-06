@@ -22,8 +22,7 @@ import screenGallery from '../assets/steps-screen-4.webp'
   Desktop: заголовок слева по центру высоты, телефон в центре, номера внизу
   по центру; блоки шагов чередуются: нечётные справа, чётные слева (на месте
   заголовка), по центру высоты.
-  Подпись активного номера раскрывается только на Desktop: на Tablet она
-  налезла бы на блок шага, на Mobile не помещается в ширину.
+  У активного номера раскрывается подпись (на всех брейкпоинтах).
   Телефон: пропорции 340 × 700, экран и рамка — в % от него, радиус экрана
   — в cqw (Steps-phone — контейнер), поэтому одна разметка на всех размерах.
 */
@@ -186,8 +185,8 @@ function Steps() {
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 {/* Подпись свёрнута колонкой 0fr (остаётся именем кнопки
-                    для скринридера), у активного на Desktop — 1fr */}
-                <span className="Steps-list-title grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] lg:group-aria-[current=step]:grid-cols-[1fr] lg:group-aria-[current=step]:opacity-100">
+                    для скринридера), у активного — 1fr */}
+                <span className="Steps-list-title grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-aria-[current=step]:grid-cols-[1fr] group-aria-[current=step]:opacity-100">
                   {/* отступ 8px от номера — внутри обрезки: padding на самой
                       ячейке не даёт свернуть её в 0, лишние 8px добавлялись
                       к gap между пунктами */}
