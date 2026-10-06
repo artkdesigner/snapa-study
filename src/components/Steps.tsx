@@ -35,6 +35,8 @@ const SCREENS = [
 ]
 
 // Переносы в описаниях — как в Figma (блоки шагов есть только с Tablet).
+// Подписи номеров (label) на Mobile — в две строки, кроме первой, на Tablet
+// — только четвёртая (по просьбе пользователя; в Figma все в одну строку).
 const STEPS: { label: ReactNode; title: string; text: ReactNode }[] = [
   {
     label: 'Live Preview',
@@ -48,7 +50,12 @@ const STEPS: { label: ReactNode; title: string; text: ReactNode }[] = [
     ),
   },
   {
-    label: 'Remote shutter release',
+    label: (
+      <>
+        Remote <br className="md:hidden" />
+        shutter release
+      </>
+    ),
     title: 'Remote shutter release',
     text: (
       <>
@@ -59,7 +66,12 @@ const STEPS: { label: ReactNode; title: string; text: ReactNode }[] = [
     ),
   },
   {
-    label: 'Pre-Shot Adjustments',
+    label: (
+      <>
+        Pre-Shot <br className="md:hidden" />
+        Adjustments
+      </>
+    ),
     title: 'Pre-Shot Adjustments',
     text: (
       <>
@@ -70,10 +82,9 @@ const STEPS: { label: ReactNode; title: string; text: ReactNode }[] = [
     ),
   },
   {
-    // на Tablet — в две строки (по просьбе пользователя; в Figma одна)
     label: (
       <>
-        Print from your <br className="hidden md:inline lg:hidden" />
+        Print from your <br className="lg:hidden" />
         smartphone gallery
       </>
     ),
@@ -179,13 +190,18 @@ function Steps() {
 
         <ol className="Steps-list relative flex w-full items-center justify-center gap-5 p-5 md:w-auto md:self-end lg:mt-auto lg:gap-7.5 lg:self-center lg:p-7.5">
           {STEPS.map((step, i) => (
-            <li key={step.title} className="Steps-list-item group">
+            // shrink-0: если список не влезет в ширину, он выйдет за поля, а
+            // не сожмёт пункт (подпись схлопнулась бы до 0 — она свёрнута
+            // колонкой 0fr и не держит ширину)
+            <li key={step.title} className="Steps-list-item group shrink-0">
               {/* клик — прокрутить к этому шагу (useScrollSteps) */}
               <button
                 type="button"
                 // номер и подпись: Mobile/Tablet Body/16 14/1.3, Desktop 16/1.1;
                 // цвет подписи — Accent 100% (наследуется от секции)
-                className="Steps-list-button flex cursor-pointer items-center text-lead-sm lg:text-lead-lg"
+                // text-left: кнопка по умолчанию центрирует текст, а подписи
+                // в две строки — по левому краю
+                className="Steps-list-button flex cursor-pointer items-center text-left text-lead-sm lg:text-lead-lg"
               >
                 <span className="Steps-list-number-wrap flex size-[2.125rem] shrink-0 items-center justify-center rounded-full border-[0.125rem] border-accent/40 text-accent/40 transition-colors duration-300 ease-[cubic-bezier(0,0,0.58,1)] group-aria-[current=step]:border-accent group-aria-[current=step]:text-accent">
                   {String(i + 1).padStart(2, '0')}
