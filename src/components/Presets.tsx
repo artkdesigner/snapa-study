@@ -73,8 +73,17 @@ function Presets() {
         </div>
 
         <div className="Presets-bottom relative z-1 flex items-start justify-between text-body md:text-body-md lg:text-body-lg">
+          {/* На Desktop в макете другой текст; строки — как в Figma: вторая
+              занимает почти всю ширину и могла бы перенестись сама */}
           <p className="Presets-bottom-left w-[10rem] md:w-[12.75rem] lg:w-[25rem]">
-            Thick, tactile paper designed to feel as good as it looks.
+            <span className="lg:hidden">
+              Thick, tactile paper designed to feel as good as it looks.
+            </span>
+            <span className="hidden whitespace-nowrap lg:inline">
+              The scale makes faces, places, and
+              <br />
+              moments feel more present and tangible.
+            </span>
           </p>
           <p className="Presets-bottom-right w-[8.875rem] text-right md:w-[11.25rem] lg:w-[14.5rem]">
             A real photograph you can hold, keep, and share.
