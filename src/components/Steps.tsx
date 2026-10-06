@@ -35,7 +35,7 @@ const SCREENS = [
 ]
 
 // Переносы в описаниях — как в Figma (блоки шагов есть только с Tablet).
-const STEPS: { label: string; title: string; text: ReactNode }[] = [
+const STEPS: { label: ReactNode; title: string; text: ReactNode }[] = [
   {
     label: 'Live Preview',
     title: 'Live preview on your phone',
@@ -70,7 +70,13 @@ const STEPS: { label: string; title: string; text: ReactNode }[] = [
     ),
   },
   {
-    label: 'Print from your smartphone gallery',
+    // на Tablet — в две строки (по просьбе пользователя; в Figma одна)
+    label: (
+      <>
+        Print from your <br className="hidden md:inline lg:hidden" />
+        smartphone gallery
+      </>
+    ),
     title: 'Print from your smartphone gallery',
     text: (
       <>
@@ -173,7 +179,7 @@ function Steps() {
 
         <ol className="Steps-list relative flex w-full items-center justify-center gap-5 p-5 md:w-auto md:self-end lg:mt-auto lg:gap-7.5 lg:self-center lg:p-7.5">
           {STEPS.map((step, i) => (
-            <li key={step.label} className="Steps-list-item group">
+            <li key={step.title} className="Steps-list-item group">
               {/* клик — прокрутить к этому шагу (useScrollSteps) */}
               <button
                 type="button"
