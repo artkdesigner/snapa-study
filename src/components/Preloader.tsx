@@ -1,6 +1,7 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import gsap from 'gsap'
 import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
+import { scrollPage } from '../lib/useSmoothScroll'
 
 /*
   Раскадровка «Preloader to Hero 01–05» (desktop 1920, шрифт 330px). Геометрия
@@ -66,9 +67,9 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
       loaded = true
     })
 
-    // Финальная позиция меряется от верха страницы — держим её там.
+    // Финальная позиция меряется от верха страницы — держим её там
+    // (восстановление прокрутки браузером выключено в index.html).
     const html = document.documentElement
-    history.scrollRestoration = 'manual'
     window.scrollTo(0, 0)
     html.style.overflow = 'hidden'
 
@@ -156,6 +157,11 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
         tl.set(back, { visibility: 'hidden' })
         tl.set(mask, { overflow: 'visible' })
         if (target) {
+          // Страница могла уехать вниз, пока шёл прелоудер (браузер вернул
+          // прокрутку после перезагрузки) — тогда h1 над экраном и слово
+          // улетело бы вверх. Возвращаем наверх перед замером; через
+          // scrollPage — чтобы Lenis знал о новом положении.
+          scrollPage(0, { immediate: true })
           const from = row.getBoundingClientRect()
           const to = target.getBoundingClientRect()
           tl.to(row, {
