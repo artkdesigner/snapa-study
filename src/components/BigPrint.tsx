@@ -3,14 +3,18 @@ import bigprintSm from '../assets/bigprint-1280.webp'
 import bigprintMd from '../assets/bigprint-2560.webp'
 import bigprintLg from '../assets/bigprint-3660.webp'
 import { BIGPRINT_ANIM_SVH, useBigPrintReveal } from '../lib/useBigPrintReveal'
+import { useCoverOverlay } from '../lib/useCoverOverlay'
 
 const TITLE = 'Bigg prints'
+const SECTION_SVH = 100 + BIGPRINT_ANIM_SVH
 
 /*
   Большие отпечатки: наезжает поверх прилипшего Mask (z-40). Секция выше
   экрана на BIGPRINT_ANIM_SVH, внутри прилипает (sticky) BigPrint-pin на
   экран; пока он прилип, по скроллу появляется BigPrint-left (заголовок
   побуквенно → BigPrint-middle → строки текста, src/lib/useBigPrintReveal.ts).
+  В конце секция сама прилипает, и на неё наезжает Choose — BigPrint-overlay
+  затемняет её (src/lib/useCoverOverlay.ts).
   Заголовок — маска (overflow-clip, продлена вниз под хвосты g/p) с буквами
   отдельными span; читается целиком через aria-label.
   Mobile/Tablet: всё по центру колонкой, текст сверху, картинка снизу
@@ -25,13 +29,16 @@ const TITLE = 'Bigg prints'
 function BigPrint() {
   const rootRef = useRef<HTMLElement>(null)
   useBigPrintReveal(rootRef)
+  useCoverOverlay(rootRef)
 
   return (
+    // Секция sticky с top = экран минус её высота: прилипает, когда
+    // BigPrint-pin дошёл до конца, и стоит, пока на неё наезжает Choose.
     <section
       ref={rootRef}
       aria-labelledby="bigprint-title"
-      style={{ height: `${100 + BIGPRINT_ANIM_SVH}svh` }}
-      className="BigPrint relative z-40 bg-bg-primary text-accent"
+      style={{ height: `${SECTION_SVH}svh`, top: `${100 - SECTION_SVH}svh` }}
+      className="BigPrint sticky z-40 bg-bg-primary text-accent"
     >
       <div className="BigPrint-pin sticky top-0 flex h-svh flex-col items-center gap-15 px-2.5 py-10 md:px-5 md:py-15 lg:flex-row lg:items-end lg:gap-7.5 lg:p-7.5">
         <div className="BigPrint-left flex w-full flex-col items-center gap-10 text-center lg:h-full lg:flex-1 lg:items-start lg:justify-between lg:gap-0 lg:text-left">
@@ -89,6 +96,13 @@ function BigPrint() {
             className="BigPrint-img absolute inset-0 block size-full max-w-none object-cover lg:object-[55.7%_50%]"
           />
         </div>
+
+        {/* внутри прилипшего BigPrint-pin — затемняет видимый экран */}
+        <div
+          aria-hidden="true"
+          data-cover-overlay
+          className="BigPrint-overlay pointer-events-none absolute inset-0 bg-dark opacity-0"
+        />
       </div>
     </section>
   )

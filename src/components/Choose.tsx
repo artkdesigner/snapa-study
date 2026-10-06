@@ -10,7 +10,7 @@ import choose4Lg from '../assets/choose-4-2912.webp'
 import { chooseScrollScreens, useChooseSlides } from '../lib/useChooseSlides'
 
 /*
-  Выбор расцветки: 4 полноэкранных фото стопкой в Choose-pin (в Figma — слои
+  Выбор расцветки: наезжает поверх прилипшего BigPrint (z-50). 4 полноэкранных фото стопкой в Choose-pin (в Figma — слои
   Choose-img, сверху Choose-img.current; первый слайд сверху, остальные под
   ним по порядку), поверх — заголовок и Choose-decoration: счётчик со
   стрелками (Choose-controls), название расцветки (Choose-slider-title-wrap)
@@ -110,7 +110,7 @@ function Choose() {
       ref={rootRef}
       aria-labelledby="choose-title"
       style={{ height: `${SECTION_SVH}svh` }}
-      className="Choose relative bg-bg-primary text-primary"
+      className="Choose relative z-50 bg-bg-primary text-primary"
     >
       <div className="Choose-pin sticky top-0 isolate flex h-svh flex-col items-center justify-end gap-15 overflow-clip lg:flex-row lg:justify-between lg:gap-0">
         <div className="Choose-title-wrap relative z-3 flex shrink-0 lg:pl-7.5">

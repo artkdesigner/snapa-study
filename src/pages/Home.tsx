@@ -32,8 +32,8 @@ function Home() {
         <Preloader targetRef={heroTitleRef} onDone={handlePreloaderDone} />
       )}
       <main>
-        {/* Стопка наездов: Hero, Intro, Slider и Mask прилипают (sticky),
-            каждая следующая секция (z выше) наезжает на предыдущую, та
+        {/* Стопка наездов: Hero, Intro, Slider, Mask и BigPrint прилипают
+            (sticky), каждая следующая секция (z выше) наезжает на предыдущую, та
             затемняется своим оверлеем (useCoverOverlay в каждой из них).
             Прилипание ограничено обёрткой — дальше стопка уезжает целиком. */}
         <div className="Cover-stack">
@@ -42,8 +42,8 @@ function Home() {
           <Slider />
           <Mask />
           <BigPrint />
+          <Choose />
         </div>
-        <Choose />
       </main>
     </>
   )
