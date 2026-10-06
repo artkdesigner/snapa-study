@@ -176,7 +176,7 @@ function Steps() {
           {STEPS.map((step, i) => (
             <li
               key={step.title}
-              className={`Steps-item absolute bottom-0 left-0 flex w-[27.5rem] flex-col gap-6 border-t border-accent p-5 opacity-0 lg:top-0 lg:my-auto lg:h-fit lg:w-[33.75rem] lg:p-0 lg:pt-5 ${i % 2 === 0 ? 'lg:right-7.5 lg:left-auto' : 'lg:left-7.5'}`}
+              className={`Steps-item absolute bottom-0 left-5 flex w-[27.5rem] flex-col gap-6 border-t border-accent py-5 pr-5 opacity-0 lg:top-0 lg:my-auto lg:h-fit lg:w-[33.75rem] lg:p-0 lg:pt-5 ${i % 2 === 0 ? 'lg:right-7.5 lg:left-auto' : 'lg:left-7.5'}`}
             >
               <h3
                 className={`Steps-item-title text-title-lg ${i === STEPS.length - 1 ? 'w-full' : 'w-[24.3125rem]'}`}
