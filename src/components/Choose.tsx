@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import circles from '../assets/choose-circles.svg'
 import choose1 from '../assets/choose-1-1024.webp'
 import choose2Sm from '../assets/choose-2-1280.webp'
@@ -8,9 +8,18 @@ import choose3Lg from '../assets/choose-3-2048.webp'
 import choose4Sm from '../assets/choose-4-1920.webp'
 import choose4Lg from '../assets/choose-4-2912.webp'
 import { chooseScrollScreens, useChooseSlides } from '../lib/useChooseSlides'
+import {
+  CHOOSE_TO_PRESETS_SCREENS,
+  useChooseToPresets,
+} from '../lib/useChooseToPresets'
+import Polaroid from './Polaroid'
 
 /*
-  Выбор расцветки: наезжает поверх прилипшего BigPrint (z-50). 4 полноэкранных фото стопкой в Choose-pin (в Figma — слои
+  Выбор расцветки: наезжает поверх прилипшего BigPrint (z-50), а в конце
+  сжимается в фотографию Presets (src/lib/useChooseToPresets.ts): Choose-pin
+  с самого начала лежит в полароиде (Polaroid.tsx), фото = экран, поля и
+  подпись — за краями экрана; прилипает обёртка Choose-stage.
+  4 полноэкранных фото стопкой в Choose-pin (в Figma — слои
   Choose-img, сверху Choose-img.current; первый слайд сверху, остальные под
   ним по порядку), поверх — заголовок и Choose-decoration: счётчик со
   стрелками (Choose-controls), название расцветки (Choose-slider-title-wrap)
@@ -98,113 +107,132 @@ function Arrow({ className }: { className: string }) {
 }
 
 const SECTION_SVH = (1 + chooseScrollScreens(SLIDES.length)) * 100
+// Высота секции: экран + прокрутка под смены со стоянками
+// (chooseScrollScreens) — столько Choose-stage стоит прилипшим; с переходом
+// в Presets — ещё CHOOSE_TO_PRESETS_SCREENS (без «уменьшить движение»).
+const HEIGHTS = {
+  '--h': `${SECTION_SVH}svh`,
+  '--h-anim': `${SECTION_SVH + CHOOSE_TO_PRESETS_SCREENS * 100}svh`,
+}
 
 function Choose() {
   const rootRef = useRef<HTMLElement>(null)
   useChooseSlides(rootRef)
+  useChooseToPresets(rootRef)
 
   return (
-    // Высота — экран + прокрутка под смены со стоянками (chooseScrollScreens):
-    // столько Choose-pin стоит прилипшим.
+    // Фона у секции нет: в переходе сквозь неё виден Presets.
     <section
       ref={rootRef}
       aria-labelledby="choose-title"
-      style={{ height: `${SECTION_SVH}svh` }}
-      className="Choose relative z-50 bg-bg-primary text-primary"
+      style={HEIGHTS as CSSProperties}
+      className="Choose relative z-50 h-(--h) text-primary motion-safe:h-(--h-anim)"
     >
-      <div className="Choose-pin sticky top-0 isolate flex h-svh flex-col items-center justify-end gap-15 overflow-clip lg:flex-row lg:justify-between lg:gap-0">
-        <div className="Choose-title-wrap relative z-3 flex shrink-0 lg:pl-7.5">
-          <h2
-            id="choose-title"
-            className="Choose-title text-poster-sm whitespace-nowrap md:text-poster-md lg:text-poster-lg"
-          >
-            Choose
-          </h2>
-        </div>
+      <div className="Choose-stage sticky top-0 h-svh overflow-clip [container-type:size]">
+        {/* Полароид сдвинут на −поля: фото (Choose-pin) ровно на экране,
+            поля и подпись — за краями (src/lib/useChooseToPresets.ts) */}
+        <Polaroid
+          captionHidden
+          className="absolute -top-2.5 -left-2.5 md:-top-4 md:-left-4 lg:-top-5 lg:-left-5"
+        >
+          <div className="Choose-pin relative isolate flex h-[100cqh] w-[100cqw] shrink-0 flex-col items-center justify-end gap-15 overflow-clip bg-bg-primary lg:flex-row lg:justify-between lg:gap-0">
+            <div className="Choose-title-wrap relative z-3 flex shrink-0 lg:pl-7.5">
+              <h2
+                id="choose-title"
+                className="Choose-title text-poster-sm whitespace-nowrap md:text-poster-md lg:text-poster-lg"
+              >
+                Choose
+              </h2>
+            </div>
 
-        <div className="Choose-decoration relative isolate z-2 h-[17.5rem] w-full shrink-0 lg:flex lg:h-full lg:w-[29.5625rem] lg:items-center lg:justify-between lg:pr-7.5">
-          <div
-            aria-hidden="true"
-            className="Choose-controls absolute top-0 left-1/2 z-3 flex -translate-x-1/2 flex-col items-center lg:static lg:translate-x-0 lg:flex-row"
-          >
-            <div className="Choose-controls-number-wrap h-[1.25rem] shrink-0 overflow-clip rounded-[0.0892rem] text-body-md lg:h-[1.625rem] lg:w-[1.5rem] lg:rounded-[0.125rem] lg:text-body-lg">
+            <div className="Choose-decoration relative isolate z-2 h-[17.5rem] w-full shrink-0 lg:flex lg:h-full lg:w-[29.5625rem] lg:items-center lg:justify-between lg:pr-7.5">
               <div
-                data-choose-track
-                className="flex flex-col items-center lg:gap-2.5"
+                aria-hidden="true"
+                className="Choose-controls absolute top-0 left-1/2 z-3 flex -translate-x-1/2 flex-col items-center lg:static lg:translate-x-0 lg:flex-row"
               >
-                {SLIDES.map((slide, i) => (
-                  <span
-                    key={slide.id}
-                    className="Choose-controls-number shrink-0"
+                <div className="Choose-controls-number-wrap h-[1.25rem] shrink-0 overflow-clip rounded-[0.0892rem] text-body-md lg:h-[1.625rem] lg:w-[1.5rem] lg:rounded-[0.125rem] lg:text-body-lg">
+                  <div
+                    data-choose-track
+                    className="flex flex-col items-center lg:gap-2.5"
                   >
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                ))}
+                    {SLIDES.map((slide, i) => (
+                      <span
+                        key={slide.id}
+                        className="Choose-controls-number shrink-0"
+                      >
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <Arrow className="Choose-poligon-1 mt-[0.6231rem] size-[0.7137rem] shrink-0 rotate-180 lg:mt-0 lg:ml-[1.125rem] lg:size-[1rem] lg:rotate-90" />
+                <span className="Choose-line-1 mt-[0.6694rem] h-[2.6763rem] w-[0.1784rem] shrink-0 bg-gold lg:mt-0 lg:ml-[0.9375rem] lg:h-[0.25rem] lg:w-[3.75rem]" />
+                <span className="Choose-line-2 mt-[0.8919rem] h-[0.2676rem] w-[0.0892rem] shrink-0 bg-gold lg:mt-0 lg:ml-[1.25rem] lg:h-[0.125rem] lg:w-[0.375rem]" />
+                <Arrow className="Choose-poligon-2 mt-[0.7137rem] size-[0.7137rem] shrink-0 lg:mt-0 lg:ml-[1rem] lg:size-[1rem] lg:-rotate-90" />
+                <span className="Choose-line-3 mt-[0.5356rem] h-[1.3381rem] w-[0.0892rem] shrink-0 bg-gold lg:mt-0 lg:ml-[0.75rem] lg:h-[0.125rem] lg:w-[1.875rem]" />
               </div>
-            </div>
-            <Arrow className="Choose-poligon-1 mt-[0.6231rem] size-[0.7137rem] shrink-0 rotate-180 lg:mt-0 lg:ml-[1.125rem] lg:size-[1rem] lg:rotate-90" />
-            <span className="Choose-line-1 mt-[0.6694rem] h-[2.6763rem] w-[0.1784rem] shrink-0 bg-gold lg:mt-0 lg:ml-[0.9375rem] lg:h-[0.25rem] lg:w-[3.75rem]" />
-            <span className="Choose-line-2 mt-[0.8919rem] h-[0.2676rem] w-[0.0892rem] shrink-0 bg-gold lg:mt-0 lg:ml-[1.25rem] lg:h-[0.125rem] lg:w-[0.375rem]" />
-            <Arrow className="Choose-poligon-2 mt-[0.7137rem] size-[0.7137rem] shrink-0 lg:mt-0 lg:ml-[1rem] lg:size-[1rem] lg:-rotate-90" />
-            <span className="Choose-line-3 mt-[0.5356rem] h-[1.3381rem] w-[0.0892rem] shrink-0 bg-gold lg:mt-0 lg:ml-[0.75rem] lg:h-[0.125rem] lg:w-[1.875rem]" />
-          </div>
 
-          {/* Desktop: коробка 48×288, в ней окно названия, повёрнутое на 90° */}
-          <div className="Choose-slider-title-box absolute bottom-[1.25rem] left-1/2 z-3 -translate-x-1/2 md:bottom-[1.625rem] lg:static lg:flex lg:h-[18rem] lg:w-[3rem] lg:translate-x-0 lg:items-center lg:justify-center">
-            <div className="Choose-slider-title-wrap h-[2.25rem] shrink-0 overflow-clip text-center text-heading-md whitespace-nowrap lg:h-[3rem] lg:rotate-90 lg:text-heading-lg">
-              <ul
-                data-choose-track
-                className="flex flex-col items-center gap-2.5"
-              >
-                {SLIDES.map((slide) => (
-                  <li key={slide.id} className="Choose-slider-title shrink-0">
-                    {slide.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <img
-            src={circles}
-            alt=""
-            draggable={false}
-            className="Choose-circle-wrap pointer-events-none absolute top-[3.25rem] left-1/2 z-2 block size-[45.5rem] max-w-none -translate-x-1/2 lg:top-1/2 lg:right-[-38.75rem] lg:left-auto lg:size-[63.75rem] lg:translate-x-0 lg:-translate-y-1/2"
-          />
-
-          <div
-            aria-hidden="true"
-            className="Choose-overlay pointer-events-none absolute inset-0 z-1 bg-linear-to-b from-black/0 to-black/50 lg:bg-linear-to-r"
-          />
-        </div>
-
-        <div className="Choose-img-wrap pointer-events-none absolute inset-0 z-1 overflow-clip [container-type:size]">
-          {SLIDES.map((slide, i) => (
-            // маска: край с осью поворота посередине лежит на нижнем
-            // (Mobile/Tablet) или правом (Desktop) краю экрана
-            <div
-              key={slide.id}
-              // первый слайд сверху стопки, как Choose-img.current в Figma
-              style={{ zIndex: SLIDES.length - i }}
-              className="Choose-group absolute top-[-50cqw] left-[-100cqh] h-[calc(50cqw+100cqh)] w-[calc(100cqw+200cqh)] origin-bottom overflow-clip lg:top-[-100cqw] lg:right-0 lg:left-auto lg:h-[calc(200cqw+100cqh)] lg:w-[calc(100cqw+50cqh)] lg:origin-right"
-            >
-              <div className="Choose-slide absolute top-[50cqw] left-[100cqh] h-[100cqh] w-[100cqw] origin-bottom lg:top-[100cqw] lg:right-0 lg:left-auto lg:origin-right">
-                <img
-                  src={slide.images[slide.images.length - 1][0]}
-                  srcSet={slide.images
-                    .map(([src, w]) => `${src} ${w}w`)
-                    .join(', ')}
-                  sizes={`max(100vw, ${Math.round(slide.ratio * 10000) / 100}vh)`}
-                  alt={slide.alt}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                  className="Choose-img absolute inset-0 block size-full max-w-none object-cover"
-                />
+              {/* Desktop: коробка 48×288, в ней окно названия, повёрнутое на 90° */}
+              <div className="Choose-slider-title-box absolute bottom-[1.25rem] left-1/2 z-3 -translate-x-1/2 md:bottom-[1.625rem] lg:static lg:flex lg:h-[18rem] lg:w-[3rem] lg:translate-x-0 lg:items-center lg:justify-center">
+                <div className="Choose-slider-title-wrap h-[2.25rem] shrink-0 overflow-clip text-center text-heading-md whitespace-nowrap lg:h-[3rem] lg:rotate-90 lg:text-heading-lg">
+                  <ul
+                    data-choose-track
+                    className="flex flex-col items-center gap-2.5"
+                  >
+                    {SLIDES.map((slide) => (
+                      <li
+                        key={slide.id}
+                        className="Choose-slider-title shrink-0"
+                      >
+                        {slide.title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
+
+              <img
+                src={circles}
+                alt=""
+                draggable={false}
+                className="Choose-circle-wrap pointer-events-none absolute top-[3.25rem] left-1/2 z-2 block size-[45.5rem] max-w-none -translate-x-1/2 lg:top-1/2 lg:right-[-38.75rem] lg:left-auto lg:size-[63.75rem] lg:translate-x-0 lg:-translate-y-1/2"
+              />
+
+              <div
+                aria-hidden="true"
+                className="Choose-overlay pointer-events-none absolute inset-0 z-1 bg-linear-to-b from-black/0 to-black/50 lg:bg-linear-to-r"
+              />
             </div>
-          ))}
-        </div>
+
+            <div className="Choose-img-wrap pointer-events-none absolute inset-0 z-1 overflow-clip [container-type:size]">
+              {SLIDES.map((slide, i) => (
+                // маска: край с осью поворота посередине лежит на нижнем
+                // (Mobile/Tablet) или правом (Desktop) краю экрана
+                <div
+                  key={slide.id}
+                  // первый слайд сверху стопки, как Choose-img.current в Figma
+                  style={{ zIndex: SLIDES.length - i }}
+                  className="Choose-group absolute top-[-50cqw] left-[-100cqh] h-[calc(50cqw+100cqh)] w-[calc(100cqw+200cqh)] origin-bottom overflow-clip lg:top-[-100cqw] lg:right-0 lg:left-auto lg:h-[calc(200cqw+100cqh)] lg:w-[calc(100cqw+50cqh)] lg:origin-right"
+                >
+                  <div className="Choose-slide absolute top-[50cqw] left-[100cqh] h-[100cqh] w-[100cqw] origin-bottom lg:top-[100cqw] lg:right-0 lg:left-auto lg:origin-right">
+                    <img
+                      src={slide.images[slide.images.length - 1][0]}
+                      srcSet={slide.images
+                        .map(([src, w]) => `${src} ${w}w`)
+                        .join(', ')}
+                      sizes={`max(100vw, ${Math.round(slide.ratio * 10000) / 100}vh)`}
+                      alt={slide.alt}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                      className="Choose-img absolute inset-0 block size-full max-w-none object-cover"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Polaroid>
       </div>
     </section>
   )

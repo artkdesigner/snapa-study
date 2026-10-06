@@ -26,8 +26,8 @@ const stepOf = (track: HTMLElement) => {
 
 /*
   Смена слайдов угловой маской: секция высотой в N экранов + запас, внутри
-  прилипает (sticky) Choose-pin. Каждый слайд, кроме последнего, по очереди
-  уходит за маску: .Choose-group (полуплоскость, обрезает слайд)
+  прилипает (sticky) Choose-stage. Каждый слайд, кроме последнего, по
+  очереди уходит за маску: .Choose-group (полуплоскость, обрезает слайд)
   поворачивается от 0° до 180° по часовой и открывает под собой следующий
   слайд. Ось — центр правого края экрана на Desktop (граница маски проходит
   снизу через лево наверх) и центр нижнего края на Mobile/Tablet (слева
@@ -48,17 +48,20 @@ export function useChooseSlides(rootRef: RefObject<HTMLElement | null>) {
     if (!root) return
     const groups = gsap.utils.toArray<HTMLElement>('.Choose-group', root)
     const slides = gsap.utils.toArray<HTMLElement>('.Choose-slide', root)
-    const pin = root.querySelector<HTMLElement>('.Choose-pin')
+    const stage = root.querySelector<HTMLElement>('.Choose-stage')
     const dial = root.querySelector<HTMLElement>('.Choose-circle-wrap')
     const tracks = gsap.utils.toArray<HTMLElement>('[data-choose-track]', root)
-    if (!pin || !dial || groups.length < 2) return
+    if (!stage || !dial || groups.length < 2) return
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         defaults: { duration: 1, ease: 'none' },
         scrollTrigger: {
           start: () => flowTop(root),
-          end: () => flowTop(root) + root.offsetHeight - pin.offsetHeight,
+          // конец — последняя стоянка; дальше переход в Presets
+          end: () =>
+            flowTop(root) +
+            stage.offsetHeight * chooseScrollScreens(groups.length),
           scrub: true,
           // шаг строк в окнах меряется заново при ресайзе (смена брейкпоинта)
           invalidateOnRefresh: true,
