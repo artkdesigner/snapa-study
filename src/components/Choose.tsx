@@ -15,10 +15,15 @@ import { chooseScrollScreens, useChooseSlides } from '../lib/useChooseSlides'
   ним по порядку), поверх — заголовок и Choose-decoration: счётчик со
   стрелками (Choose-controls), название расцветки (Choose-slider-title-wrap)
   и шкала из трёх пунктирных кругов (Choose-circle-wrap).
-  Смена слайдов по скроллу — угловая маска с осью в центре правого края
-  экрана (src/lib/useChooseSlides.ts): каждый слайд обёрнут в маску
-  Choose-group — полуплоскость слева от правого края экрана, со стороной
-  «ширина + полвысоты экрана» (дальше от оси экрана нет). Размеры — в
+  Смена слайдов по скроллу — угловая маска (src/lib/useChooseSlides.ts):
+  каждый слайд обёрнут в маску Choose-group — полуплоскость, край которой
+  проходит через ось поворота. Desktop: ось в центре правого края экрана,
+  маска — слева от правого края, со стороной «ширина + полвысоты экрана».
+  Mobile/Tablet: ось в центре нижнего края, маска — над нижним краем, со
+  стороной «полширины + высота экрана». Сторона — с запасом не меньше
+  расстояния от оси до дальнего угла экрана, поэтому при любом угле маска
+  накрывает весь экран со своей стороны. Точка поворота (origin) у маски и
+  слайда — классами, на брейкпоинтах переключается сама. Размеры — в
   единицах контейнера (cqw/cqh) от Choose-img-wrap.
   Счётчик и название — окна (overflow-clip) на высоту одной строки, в
   которых стопкой ([data-choose-track]) стоят все значения; при смене
@@ -175,15 +180,15 @@ function Choose() {
 
         <div className="Choose-img-wrap pointer-events-none absolute inset-0 z-1 overflow-clip [container-type:size]">
           {SLIDES.map((slide, i) => (
-            // маска: правый край — по правому краю экрана, середина — на
-            // уровне центра экрана (ось поворота)
+            // маска: край с осью поворота посередине лежит на нижнем
+            // (Mobile/Tablet) или правом (Desktop) краю экрана
             <div
               key={slide.id}
               // первый слайд сверху стопки, как Choose-img.current в Figma
               style={{ zIndex: SLIDES.length - i }}
-              className="Choose-group absolute top-[-100cqw] right-0 h-[calc(200cqw+100cqh)] w-[calc(100cqw+50cqh)] overflow-clip"
+              className="Choose-group absolute top-[-50cqw] left-[-100cqh] h-[calc(50cqw+100cqh)] w-[calc(100cqw+200cqh)] origin-bottom overflow-clip lg:top-[-100cqw] lg:right-0 lg:left-auto lg:h-[calc(200cqw+100cqh)] lg:w-[calc(100cqw+50cqh)] lg:origin-right"
             >
-              <div className="Choose-slide absolute top-[100cqw] right-0 h-[100cqh] w-[100cqw]">
+              <div className="Choose-slide absolute top-[50cqw] left-[100cqh] h-[100cqh] w-[100cqw] origin-bottom lg:top-[100cqw] lg:right-0 lg:left-auto lg:origin-right">
                 <img
                   src={slide.images[slide.images.length - 1][0]}
                   srcSet={slide.images
