@@ -44,8 +44,17 @@ function Presets() {
         </h2>
 
         <div className="Presets-top relative z-2 flex items-start justify-between text-body md:text-body-md lg:text-body-lg">
-          <p className="Presets-top-left w-[10rem] md:w-[14.25rem] lg:w-[21.75rem]">
-            More space for detail, faces, and atmosphere in every photograph.
+          {/* На Desktop в макете другой текст (тот же, что слева внизу),
+              строки — как в Figma */}
+          <p className="Presets-top-left w-[10rem] md:w-[14.25rem] lg:w-[22.9375rem]">
+            <span className="lg:hidden">
+              More space for detail, faces, and atmosphere in every photograph.
+            </span>
+            <span className="hidden whitespace-nowrap lg:inline">
+              The scale makes faces, places, and
+              <br />
+              moments feel more present and tangible.
+            </span>
           </p>
           <p className="Presets-top-right w-[10rem] text-right md:w-[14.25rem] lg:w-[18.5rem]">
             Natural tones and balanced contrast that stay vivid over time.
