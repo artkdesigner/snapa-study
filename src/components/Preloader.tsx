@@ -187,9 +187,12 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
   }, [targetRef, onDone])
 
   return (
+    // z-100 — выше всех слоёв страницы (стопка наездов доходит до z-50):
+    // после перезагрузки посреди страницы прелоудер не должен оказаться под
+    // секцией.
     <div
       ref={rootRef}
-      className="Preloader fixed inset-0 z-50 bg-dark text-primary"
+      className="Preloader fixed inset-0 z-100 bg-dark text-primary"
       aria-hidden="true"
     >
       <div
