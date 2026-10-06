@@ -98,6 +98,17 @@
   --text-poster-lg--line-height: 0.9;
   --text-poster-lg--letter-spacing: -0.1em;
 
+  /* Title/160: Mobile 48 / Tablet 84 / Desktop 160 */
+  --text-slogan-sm: 3rem;
+  --text-slogan-sm--line-height: 0.9;
+  --text-slogan-sm--letter-spacing: -0.08em;
+  --text-slogan-md: 5.25rem;
+  --text-slogan-md--line-height: 1;
+  --text-slogan-md--letter-spacing: -0.08em;
+  --text-slogan-lg: 10rem;
+  --text-slogan-lg--line-height: 1;
+  --text-slogan-lg--letter-spacing: -0.1em;
+
   /* Body/20: Tablet 16 / Desktop 20 */
   --text-body-md: 1rem;
   --text-body-md--line-height: 1.3;

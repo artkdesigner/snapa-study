@@ -1,6 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import BigPrint from '../components/BigPrint'
 import Choose from '../components/Choose'
+import Footer from '../components/Footer'
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
 import Mask from '../components/Mask'
@@ -56,6 +57,7 @@ function Home() {
           <Steps />
         </div>
       </main>
+      <Footer />
     </>
   )
 }
