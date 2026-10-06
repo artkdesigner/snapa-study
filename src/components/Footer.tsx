@@ -23,6 +23,8 @@ import bgMobile from '../assets/footer-mobile.webp'
 const MENU = ['Camera', 'Prints', 'Presets', 'Mobile App', 'Contact']
 // Главные страницы соцсетей (своих аккаунтов у Snapa нет); открываются в
 // новой вкладке.
+// Footer-link-small (соцсети и почта): Hover в Figma — opacity 70%; переход
+// как у Button (Ease out 300ms) — длительность из Figma не читается.
 const SOCIAL = [
   { name: 'Instagram', href: 'https://www.instagram.com/' },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/' },
@@ -146,7 +148,7 @@ function Footer() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="Footer-link-small block"
+                  className="Footer-link-small block transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70"
                 >
                   {name}
                 </a>
@@ -159,7 +161,10 @@ function Footer() {
           <p className="Footer-email-title text-primary/40">
             Keen to work with us?
           </p>
-          <a href="mailto:hello@snapa.io" className="Footer-link-small block">
+          <a
+            href="mailto:hello@snapa.io"
+            className="Footer-link-small block transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70"
+          >
             hello@snapa.io
           </a>
         </div>
