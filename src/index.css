@@ -8,6 +8,16 @@
   font-display: swap;
 }
 
+/* Рукописная подпись на полароиде (Presets). Подмножество — только латиница
+   и типографские знаки: на сайте шрифтом набрано несколько слов. */
+@font-face {
+  font-family: 'Kobzar KS';
+  src: url('./assets/fonts/KobzarKS-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /*
   Токены из Figma (get_variable_defs). Брейкпоинты совпадают с зонами
   rem-скейлинга корня ниже: md — Tablet (от 481px), lg — Desktop (от 992px).
