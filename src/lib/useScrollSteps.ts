@@ -26,9 +26,10 @@ const TEXT_EASE = 'power2.out'
   - экран телефона: экраны лежат стопкой, сверху — экран вступления, под ним
     шаги 1–4; виден экран i, пока состояние ≤ i. Вперёд — верхний гаснет и
     открывает следующий; назад — гаснувший проявляется обратно поверх;
-  - текст: заголовок секции (.Steps-title-wrap) виден только во вступлении,
-    блок шага (.Steps-item) — только на своём шаге; старый гаснет, новый
-    проявляется;
+  - текст: блок шага (.Steps-item) виден только на своём шаге; старый
+    гаснет, новый проявляется. Заголовок секции (.Steps-title-wrap) гаснет
+    на шагах только на Desktop — там блоки шагов встают на его место; на
+    Mobile/Tablet он сверху и стоит всегда;
   - пункт списка: aria-current на активном — обводку/цифру 100% и раскрытие
     подписи задаёт CSS в Steps.tsx.
   Клик по .Steps-list-button — прокрутка к шагу своего пункта.
@@ -51,6 +52,9 @@ export function useScrollSteps(rootRef: RefObject<HTMLElement | null>) {
     const time = (seconds: number) => (reduced ? 0 : seconds)
     // текст состояния: 0 — заголовок секции, k — блок шага k
     const blocks = [intro, ...texts]
+    const desktop = window.matchMedia('(min-width: 62rem)')
+    const isVisible = (block: number, state: number) =>
+      block === state || (block === 0 && !desktop.matches)
     let current = 0
     let scrollToStep = (_state: number) => {}
 
@@ -95,7 +99,7 @@ export function useScrollSteps(rootRef: RefObject<HTMLElement | null>) {
       }
 
       blocks.forEach((block, i) => {
-        if (i === next) {
+        if (isVisible(i, next)) {
           gsap.to(block, {
             opacity: 1,
             duration: time(TEXT_IN_DURATION),
@@ -122,7 +126,7 @@ export function useScrollSteps(rootRef: RefObject<HTMLElement | null>) {
     const ctx = gsap.context(() => {}, root)
     ctx.add(() => {
       gsap.set(screens, { opacity: 1 })
-      gsap.set(blocks, { opacity: (i) => (i === 0 ? 1 : 0) })
+      gsap.set(blocks, { opacity: (i) => (isVisible(i, 0) ? 1 : 0) })
       markCurrent(0)
 
       const steps = ScrollTrigger.create({
@@ -155,8 +159,15 @@ export function useScrollSteps(rootRef: RefObject<HTMLElement | null>) {
     }
     root.addEventListener('click', onClick)
 
+    // Смена брейкпоинта посреди шагов — заголовок секции сразу в нужное
+    // состояние (на Desktop погашен, на Mobile/Tablet виден).
+    const onBreakpoint = () =>
+      gsap.set(intro, { opacity: isVisible(0, current) ? 1 : 0 })
+    desktop.addEventListener('change', onBreakpoint)
+
     return () => {
       root.removeEventListener('click', onClick)
+      desktop.removeEventListener('change', onBreakpoint)
       ctx.revert()
     }
   }, [rootRef])
