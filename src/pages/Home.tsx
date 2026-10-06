@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import BigPrint from '../components/BigPrint'
 import Choose from '../components/Choose'
 import Hero from '../components/Hero'
@@ -7,6 +7,7 @@ import Mask from '../components/Mask'
 import Preloader from '../components/Preloader'
 import Slider from '../components/Slider'
 import type { HeroReveal } from '../lib/useHeroReveal'
+import { restoreScroll } from '../lib/scrollMemory'
 import { useSmoothScroll } from '../lib/useSmoothScroll'
 
 const prefersReducedMotion = () =>
@@ -21,6 +22,9 @@ function Home() {
   const handlePreloaderDone = useCallback(() => setHeroReveal('play'), [])
   // Плавный скролл; пока идёт прелоудер — прокрутка стоит.
   useSmoothScroll(heroReveal === 'hidden')
+  // После перезагрузки — на то место, где остановились (после Lenis, под
+  // прелоудером, до первой отрисовки).
+  useLayoutEffect(restoreScroll, [])
 
   return (
     <>

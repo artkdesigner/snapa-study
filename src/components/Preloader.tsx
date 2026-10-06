@@ -1,7 +1,6 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import gsap from 'gsap'
 import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
-import { scrollPage } from '../lib/useSmoothScroll'
 
 /*
   Раскадровка «Preloader to Hero 01–05» (desktop 1920, шрифт 330px). Геометрия
@@ -67,10 +66,10 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
       loaded = true
     })
 
-    // Финальная позиция меряется от верха страницы — держим её там
-    // (восстановление прокрутки браузером выключено в index.html).
+    // Прокрутка стоит, пока идёт прелоудер. Страница может стоять не в
+    // начале — после перезагрузки она возвращается на место
+    // (src/lib/scrollMemory.ts), тогда слово в конце гаснет на месте.
     const html = document.documentElement
-    window.scrollTo(0, 0)
     html.style.overflow = 'hidden'
 
     const ctx = gsap.context(() => {})
@@ -151,17 +150,14 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
 
       // Кадр 04 → 05: маска снимается, слово едет точно на место Hero-snapa.
       // Запасные буквы ждут под маской — прячем, иначе без маски они видны
-      // второй надписью под словом.
-      const target = targetRef.current
+      // второй надписью под словом. Едет, только если страница в самом
+      // начале: иначе Hero не на экране (или накрыт следующими секциями) —
+      // слово просто гаснет вместе с прелоудером.
+      const target = window.scrollY < 1 ? targetRef.current : null
       await play((tl) => {
         tl.set(back, { visibility: 'hidden' })
         tl.set(mask, { overflow: 'visible' })
         if (target) {
-          // Страница могла уехать вниз, пока шёл прелоудер (браузер вернул
-          // прокрутку после перезагрузки) — тогда h1 над экраном и слово
-          // улетело бы вверх. Возвращаем наверх перед замером; через
-          // scrollPage — чтобы Lenis знал о новом положении.
-          scrollPage(0, { immediate: true })
           const from = row.getBoundingClientRect()
           const to = target.getBoundingClientRect()
           tl.to(row, {
