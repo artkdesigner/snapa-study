@@ -1,0 +1,191 @@
+import { useRef, type ReactNode } from 'react'
+import { useScrollSteps } from '../lib/useScrollSteps'
+import frame from '../assets/steps-phone-frame.webp'
+import screenHome from '../assets/steps-screen-0.webp'
+import screenPreview from '../assets/steps-screen-1.webp'
+import screenShutter from '../assets/steps-screen-2.webp'
+import screenAdjust from '../assets/steps-screen-3.webp'
+import screenGallery from '../assets/steps-screen-4.webp'
+
+/*
+  Шаги работы с приложением: заголовок секции, по центру — телефон, внизу —
+  номера шагов. Скролл с пином (src/lib/useScrollSteps.ts) по очереди
+  показывает 4 шага: экран телефона, блок шага (заголовок + описание) и
+  активный номер с подписью.
+  Mobile: колонка — заголовок, телефон, номера; блоков шагов нет (в макете
+  скрыты). Tablet: заголовок сверху по центру, телефон по центру экрана
+  чуть ниже середины, номера справа внизу, блок шага слева внизу.
+  Desktop: заголовок слева по центру высоты, телефон в центре, номера внизу
+  по центру; блоки шагов чередуются: нечётные справа, чётные слева (на месте
+  заголовка), по центру высоты.
+  Подпись активного номера раскрывается только на Desktop: на Tablet она
+  налезла бы на блок шага, на Mobile не помещается в ширину.
+  Телефон: пропорции 340 × 700, экран и рамка — в % от него, радиус экрана
+  — в cqw (Steps-phone — контейнер), поэтому одна разметка на всех размерах.
+*/
+const SCREENS = [
+  { src: screenHome, alt: 'Snapa app home screen' },
+  { src: screenPreview, alt: 'Live camera preview in the Snapa app' },
+  { src: screenShutter, alt: 'Shutter timer in the Snapa app' },
+  { src: screenAdjust, alt: 'Camera controls in the Snapa app' },
+  { src: screenGallery, alt: 'Photo gallery in the Snapa app' },
+]
+
+// Переносы в описаниях — как в Figma (блоки шагов есть только с Tablet).
+const STEPS: { label: string; title: string; text: ReactNode }[] = [
+  {
+    label: 'Live Preview',
+    title: 'Live preview on your phone',
+    text: (
+      <>
+        See the exact composition and framing in real
+        <br />
+        time before taking the shot.
+      </>
+    ),
+  },
+  {
+    label: 'Remote shutter release',
+    title: 'Remote shutter release',
+    text: (
+      <>
+        Trigger the camera from your phone to shoot
+        <br />
+        hands-free and stay in the frame.
+      </>
+    ),
+  },
+  {
+    label: 'Pre-Shot Adjustments',
+    title: 'Pre-Shot Adjustments',
+    text: (
+      <>
+        Fine-tune light, brightness, and camera settings
+        <br />
+        in the app before capturing the image.
+      </>
+    ),
+  },
+  {
+    label: 'Print from your smartphone gallery',
+    title: 'Print from your smartphone gallery',
+    text: (
+      <>
+        Send selected images from your phone to the camera and
+        <br />
+        print them instantly.
+      </>
+    ),
+  },
+]
+
+// Состояний — вступление + шаги; смены на первых (состояний − 1) экранах,
+// плюс запас на последнем шаге.
+const HOLD_SVH = 50
+const SECTION_SVH = STEPS.length * 100 + 100 + HOLD_SVH
+
+function Steps() {
+  const rootRef = useRef<HTMLElement>(null)
+  useScrollSteps(rootRef)
+
+  return (
+    <section
+      ref={rootRef}
+      aria-labelledby="steps-title"
+      style={{ height: `${SECTION_SVH}svh` }}
+      className="Steps relative bg-bg-primary text-accent"
+    >
+      <div className="Steps-pin sticky top-0 flex h-svh flex-col items-center justify-between overflow-clip">
+        <div className="Steps-title-wrap flex flex-col items-center gap-5 px-2.5 pt-10 text-center md:px-0 md:pt-5 lg:absolute lg:inset-y-0 lg:left-7.5 lg:items-start lg:justify-center lg:gap-7.5 lg:pt-0 lg:text-left">
+          {/* Mobile 48px без стиля в Figma (Title/88 там 34px), Tablet —
+              как Desktop (Title/88/Desktop) */}
+          <h2
+            id="steps-title"
+            className="Steps-title text-[3rem] leading-none tracking-[-0.07em] md:text-headline-lg lg:whitespace-nowrap"
+          >
+            Control <br className="hidden lg:inline" />
+            the <br className="md:hidden" />
+            Shoot <br className="hidden md:inline" />
+            from your Phone
+          </h2>
+          <p className="Steps-sub w-[15.8125rem] text-lead-sm md:w-[21.75rem] md:text-lead-lg">
+            Snapa connects to a mobile app for iOS and Android, turning your
+            smartphone into a remote viewfinder and control center.
+          </p>
+        </div>
+
+        {/* Mobile: телефон занимает место между заголовком и номерами (на
+            низких экранах сжимается). Tablet/Desktop: по центру экрана. */}
+        <div className="Steps-phone-wrap flex min-h-0 w-full flex-1 items-center justify-center md:pointer-events-none md:absolute md:inset-0">
+          <div className="Steps-phone @container relative aspect-[340/700] h-full max-h-[23.75rem] md:top-[2.375rem] md:h-[31.25rem] md:max-h-none lg:top-0 lg:h-[43.75rem]">
+            <div className="Steps-phone-content absolute inset-[1.4107%_3.8991%_1.6364%_3.9958%] overflow-clip rounded-[10.049cqw] bg-primary">
+              {SCREENS.map((screen, i) => (
+                <img
+                  key={screen.src}
+                  src={screen.src}
+                  alt={screen.alt}
+                  aria-hidden={i !== 0}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  // сверху — экран вступления, под ним шаги по порядку
+                  style={{ zIndex: SCREENS.length - i }}
+                  className="Steps-screen absolute inset-0 block size-full max-w-none object-cover"
+                />
+              ))}
+            </div>
+            <img
+              src={frame}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="Steps-phone-frame pointer-events-none absolute top-[-1.1407%] left-[-1.4836%] block h-[102.032%] w-[102.749%] max-w-none"
+            />
+          </div>
+        </div>
+
+        <ol className="Steps-items pointer-events-none absolute inset-0 hidden md:block">
+          {STEPS.map((step, i) => (
+            <li
+              key={step.title}
+              className={`Steps-item absolute bottom-0 left-0 flex w-[33.75rem] flex-col gap-6 border-t border-accent p-5 opacity-0 lg:top-0 lg:my-auto lg:h-fit lg:p-0 lg:pt-5 ${i % 2 === 0 ? 'lg:right-7.5 lg:left-auto' : 'lg:left-7.5'}`}
+            >
+              <h3
+                className={`Steps-item-title text-title-lg ${i === STEPS.length - 1 ? 'w-full' : 'w-[24.3125rem]'}`}
+              >
+                {step.title}
+              </h3>
+              <p className="Steps-item-sub text-lead-lg">{step.text}</p>
+            </li>
+          ))}
+        </ol>
+
+        <ol className="Steps-list relative flex w-full items-center justify-center gap-5 p-5 md:w-auto md:self-end lg:mt-auto lg:gap-7.5 lg:self-center lg:p-7.5">
+          {STEPS.map((step, i) => (
+            <li key={step.label} className="Steps-list-item group">
+              {/* клик — прокрутить к этому шагу (useScrollSteps) */}
+              <button
+                type="button"
+                className="Steps-list-button flex cursor-pointer items-center text-lead-lg"
+              >
+                <span className="Steps-list-number-wrap flex size-[2.125rem] shrink-0 items-center justify-center rounded-full border-[0.125rem] border-accent/40 text-accent/40 transition-colors duration-300 ease-[cubic-bezier(0,0,0.58,1)] group-aria-[current=step]:border-accent group-aria-[current=step]:text-accent">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                {/* Подпись свёрнута колонкой 0fr (остаётся именем кнопки
+                    для скринридера), у активного на Desktop — 1fr */}
+                <span className="Steps-list-title grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] lg:group-aria-[current=step]:grid-cols-[1fr] lg:group-aria-[current=step]:opacity-100">
+                  <span className="min-w-0 overflow-hidden pl-2 whitespace-nowrap">
+                    {step.label}
+                  </span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+export default Steps

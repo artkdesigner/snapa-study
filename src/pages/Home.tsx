@@ -7,6 +7,7 @@ import Mask from '../components/Mask'
 import Preloader from '../components/Preloader'
 import Presets from '../components/Presets'
 import Slider from '../components/Slider'
+import Steps from '../components/Steps'
 import type { HeroReveal } from '../lib/useHeroReveal'
 import { restoreScroll } from '../lib/scrollMemory'
 import { useSmoothScroll } from '../lib/useSmoothScroll'
@@ -46,6 +47,7 @@ function Home() {
           <Choose />
         </div>
         <Presets />
+        <Steps />
       </main>
     </>
   )
