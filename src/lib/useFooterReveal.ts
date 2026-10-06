@@ -25,6 +25,9 @@ const STEP = 0.1
 // Slider (useScrollItemsReveal).
 const ITEM = { duration: 0.5, ease: 'power2.out' }
 const ITEM_DISTANCE_REM = 1.5
+// Линии над меню, логотипом и текстом растут по ширине 0 → 100% от левого
+// края — с той же кривой, что строки текста (linesReveal).
+const RULE = { duration: 1.2, ease: 'expo.out' }
 // Маска слова продлена вниз на столько же (Footer-title-word) — буква
 // стартует целиком под ней.
 const LETTER_BLEED_EM = 0.2
@@ -36,14 +39,16 @@ const START_VIEWPORT = 0.3
   Цепочка появления Footer: буквы слогана выезжают снизу из масок слов →
   строки меню (подпись «Menu» на Desktop и пункты) из строчных масок →
   логотип → строки текста → соцсети → почта → адрес. Один общий шаг STEP
-  между стартами (буквы — LETTER_STEP).
+  между стартами (буквы — LETTER_STEP). Линия над меню, логотипом и
+  текстом растёт по ширине вместе с появлением своего блока.
   При скролле назад выше точки запуска всё сразу и одновременно уходит
   обратно; смена направления на ходу подхватывает элементы с текущего места.
   Строки меню и текста делятся только на время анимации (как в
   useScrollLinesReveal), буквы слогана — постоянные span[data-letter].
   Ожидаются .Footer-title с [data-letter], .Footer-menu-title,
   .Footer-link-big, .Footer-logo, .Footer-text, .Footer-social-wrap,
-  .Footer-email-wrap, .Footer-location.
+  .Footer-email-wrap, .Footer-location и линии .Footer-menu-line,
+  .Footer-logo-line, .Footer-text-line (origin слева задан классом).
 */
 export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
@@ -61,6 +66,10 @@ export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
     const contacts = q(
       '.Footer-social-wrap, .Footer-email-wrap, .Footer-location',
     )
+    const menuRule = q('.Footer-menu-line')
+    const logoRule = q('.Footer-logo-line')
+    const textRule = q('.Footer-text-line')
+    const rules = [...menuRule, ...logoRule, ...textRule]
     if (!title || !letters.length) return
     const lineTexts = [...menuTexts, ...text]
 
@@ -102,6 +111,7 @@ export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
         const linesCount = (list: typeof blocks) =>
           list.reduce((sum, block) => sum + block.lines.length, 0)
         const item = { ...ITEM, autoAlpha: 1, y: 0 }
+        const rule = { ...RULE, scaleX: 1 }
 
         tl = gsap.timeline({ onComplete: reset })
         let at = 0
@@ -111,10 +121,13 @@ export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
           at,
         )
         at += (letters.length - 1) * LETTER_STEP + STEP
+        tl.to(menuRule, rule, at)
         addLinesIn(tl, menuBlocks, at, { sequence: true })
         at += linesCount(menuBlocks) * STEP
+        tl.to(logoRule, rule, at)
         tl.to(logo, item, at)
         at += STEP
+        tl.to(textRule, rule, at)
         addLinesIn(tl, textBlocks, at, { sequence: true })
         at += linesCount(textBlocks) * STEP
         contacts.forEach((el, i) => tl!.to(el, item, at + i * STEP))
@@ -134,12 +147,14 @@ export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
         tl.to(letters, { ...LETTER, ...letterHidden() }, 0)
         addLinesOut(tl, prepared.blocks, 0)
         tl.to([...logo, ...contacts], { ...ITEM, ...itemHidden() }, 0)
+        tl.to(rules, { ...RULE, scaleX: 0 }, 0)
       })
 
     ctx.add(() => {
       gsap.set(letters, letterHidden())
       gsap.set(lineTexts, { autoAlpha: 0 })
       gsap.set([...logo, ...contacts], itemHidden())
+      gsap.set(rules, { scaleX: 0 })
       ScrollTrigger.create({
         // по потоку — соседние секции прилипают (sticky), см. flowTop
         start: () => flowTop(root) - window.innerHeight * START_VIEWPORT,

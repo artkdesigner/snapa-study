@@ -14,8 +14,9 @@ import bgMobile from '../assets/footer-mobile.webp'
   Порядок в DOM — мобильный, на Desktop ячейки расставлены явно.
   Наезжает на прилипший Steps (z выше, Steps затемняется). Когда наехал на
   70%, по очереди появляются слоган (побуквенно), меню, логотип, текст,
-  соцсети, почта, адрес (src/lib/useFooterReveal.ts). Линии над блоками —
-  часть раскладки, не анимируются.
+  соцсети, почта, адрес (src/lib/useFooterReveal.ts); линии над меню,
+  логотипом и текстом растут по ширине. Линия — отдельный span поверх
+  прозрачной верхней рамки (рамка держит место в раскладке, как в Figma).
   Слоган — кнопка (откроет Popup). Каждое слово — маска (обрезка только по вертикали, продлена вниз
   под хвост «y»), буквы в ней — inline-block, выезжают снизу.
 */
@@ -81,7 +82,11 @@ function Footer() {
       </button>
 
       <div className="Footer-content relative flex w-full flex-col gap-6 text-body md:gap-10 lg:grid lg:grid-cols-3 lg:gap-x-2.5 lg:gap-y-15">
-        <div className="Footer-logo-wrap border-t border-primary pt-6 md:pt-10 lg:col-start-2 lg:row-start-1 lg:self-start lg:pt-2.5">
+        <div className="Footer-logo-wrap relative border-t border-transparent pt-6 md:pt-10 lg:col-start-2 lg:row-start-1 lg:self-start lg:pt-2.5">
+          <span
+            aria-hidden="true"
+            className="Footer-logo-line absolute inset-x-0 -top-px h-px origin-left bg-primary"
+          />
           <img
             src={logo}
             alt="Snapa"
@@ -92,8 +97,12 @@ function Footer() {
 
         <nav
           aria-label="Menu"
-          className="Footer-Menu flex flex-col gap-2.5 lg:col-start-1 lg:row-start-1 lg:border-t lg:border-primary lg:pt-2.5"
+          className="Footer-Menu relative flex flex-col gap-2.5 lg:col-start-1 lg:row-start-1 lg:border-t lg:border-transparent lg:pt-2.5"
         >
+          <span
+            aria-hidden="true"
+            className="Footer-menu-line absolute inset-x-0 -top-px h-px origin-left bg-primary hidden lg:block"
+          />
           {/* подпись есть только на Desktop */}
           <p
             aria-hidden="true"
@@ -111,7 +120,11 @@ function Footer() {
           </ul>
         </nav>
 
-        <div className="Footer-text-wrap pt-5 md:pt-15 lg:col-start-3 lg:row-start-1 lg:self-start lg:border-t lg:border-primary lg:pt-2.5 lg:whitespace-nowrap">
+        <div className="Footer-text-wrap relative pt-5 md:pt-15 lg:col-start-3 lg:row-start-1 lg:self-start lg:border-t lg:border-transparent lg:pt-2.5 lg:whitespace-nowrap">
+          <span
+            aria-hidden="true"
+            className="Footer-text-line absolute inset-x-0 -top-px h-px origin-left bg-primary hidden lg:block"
+          />
           <p className="Footer-text">
             More space, more detail, <br className="lg:hidden" />
             and more meaning in every <br className="hidden lg:inline" />
