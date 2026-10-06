@@ -49,10 +49,10 @@ const lerp = (from: number, to: number, t: number) => from + (to - from) * t
   в полароиде (.Choose-mask): фото = экран, поля и подпись — за краями
   экрана. По скроллу (scrub) окно фото (Choose-pin) меняет размер, полароид
   поворачивается и встаёт на место полароида Presets
-  ([data-presets-polaroid], он прозрачный — мишень), а заголовок и декор
-  Choose разъезжаются за края: на Desktop — влево и вправо, на
-  Mobile/Tablet — вверх и вниз (так они разнесены в уменьшенном Choose в
-  макетах Presets). Mobile/Tablet идут по тем же кадрам, что Desktop.
+  ([data-presets-polaroid], он прозрачный — мишень). Заголовок и декор
+  Choose: на Desktop разъезжаются за края влево и вправо; на Mobile/Tablet
+  декор уезжает вниз, а заголовок стоит на месте и гаснет до 0.
+  Mobile/Tablet идут по тем же кадрам, что Desktop.
   Всё пишется инлайном на каждый шаг скролла по замерам (refresh): размер
   экрана, поля полароида, размер и центр мишени.
 */
@@ -128,13 +128,15 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
       if (m.desktop) {
         // заголовок прижат к левому краю, декор — к правому
         const shift = (Math.max(m.titleW, m.decW) + m.flyExtra) * f.fly
-        gsap.set(title, { x: -shift, y: 0 })
+        gsap.set(title, { x: -shift, y: 0, opacity: 1 })
         gsap.set(decoration, { x: shift, y: 0 })
       } else {
-        // колонка прижата к низу: декор внизу, заголовок над ним
+        // Заголовок стоит на месте и гаснет (по просьбе пользователя), декор
+        // уезжает вниз — на тот же путь, что был у пары «заголовок вверх,
+        // декор вниз»: колонка прижата к низу, заголовок над декором.
         const titleBottom = h - m.decH - m.gap
         const shift = (Math.max(titleBottom, m.decH) + m.flyExtra) * f.fly
-        gsap.set(title, { x: 0, y: -shift })
+        gsap.set(title, { x: 0, y: 0, opacity: 1 - f.fly })
         gsap.set(decoration, { x: 0, y: shift })
       }
     }
@@ -164,7 +166,8 @@ export function useChooseToPresets(rootRef: RefObject<HTMLElement | null>) {
     return () => {
       ctx.revert()
       gsap.set(pin, { clearProps: 'width,height' })
-      gsap.set([polaroid, title, decoration], { clearProps: 'transform' })
+      gsap.set([polaroid, decoration], { clearProps: 'transform' })
+      gsap.set(title, { clearProps: 'transform,opacity' })
     }
   }, [rootRef])
 }
