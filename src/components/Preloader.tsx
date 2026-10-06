@@ -1,6 +1,7 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import gsap from 'gsap'
 import { WORDMARK_LETTERS, WORDMARK_LETTER_CLASS } from '../lib/wordmark'
+import { useScrollLock } from '../lib/useScrollLock'
 
 /*
   Раскадровка «Preloader to Hero 01–05» (desktop 1920, шрифт 330px). Геометрия
@@ -53,6 +54,9 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const maskRef = useRef<HTMLDivElement>(null)
   const rowRef = useRef<HTMLDivElement>(null)
+  // Прокрутка заблокирована, пока прелоудер на странице — до конца его
+  // исчезновения (Home убирает его после onDone).
+  useScrollLock()
 
   useEffect(() => {
     const root = rootRef.current
@@ -66,11 +70,9 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
       loaded = true
     })
 
-    // Прокрутка стоит, пока идёт прелоудер. Страница может стоять не в
-    // начале — после перезагрузки она возвращается на место
-    // (src/lib/scrollMemory.ts), тогда слово в конце гаснет на месте.
-    const html = document.documentElement
-    html.style.overflow = 'hidden'
+    // Страница может стоять не в начале — после перезагрузки она
+    // возвращается на место (src/lib/scrollMemory.ts), тогда слово в конце
+    // гаснет на месте.
 
     const ctx = gsap.context(() => {})
     // build возвращает момент, когда пора запускать следующую фазу (не
@@ -181,7 +183,6 @@ function Preloader({ targetRef, onDone }: PreloaderProps) {
     return () => {
       cancelled = true
       ctx.revert()
-      html.style.overflow = ''
     }
   }, [targetRef, onDone])
 
