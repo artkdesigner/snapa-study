@@ -34,11 +34,15 @@ const LETTER_BLEED_EM = 0.2
 // Точка запуска: верх секции дошёл до 30% высоты экрана — секция наехала на
 // 70%.
 const START_VIEWPORT = 0.3
+// Tablet (md, но не lg): логотип появляется раньше меню — он там стоит над
+// меню.
+const TABLET = '(min-width: 30.0625rem) and (max-width: 61.9375rem)'
 
 /*
   Цепочка появления Footer: буквы слогана выезжают снизу из масок слов →
   строки меню (подпись «Menu» на Desktop и пункты) из строчных масок →
-  логотип → строки текста → соцсети → почта → адрес. Один общий шаг STEP
+  логотип (на Tablet — до меню) → строки текста → соцсети → почта →
+  адрес. Один общий шаг STEP
   между стартами (буквы — LETTER_STEP). Линия над меню, логотипом и
   текстом растёт по ширине вместе с появлением своего блока.
   При скролле назад выше точки запуска всё сразу и одновременно уходит
@@ -121,12 +125,23 @@ export function useFooterReveal(rootRef: RefObject<HTMLElement | null>) {
           at,
         )
         at += (letters.length - 1) * LETTER_STEP + STEP
-        tl.to(menuRule, rule, at)
-        addLinesIn(tl, menuBlocks, at, { sequence: true })
-        at += linesCount(menuBlocks) * STEP
-        tl.to(logoRule, rule, at)
-        tl.to(logo, item, at)
-        at += STEP
+        const addMenu = () => {
+          tl!.to(menuRule, rule, at)
+          addLinesIn(tl!, menuBlocks, at, { sequence: true })
+          at += linesCount(menuBlocks) * STEP
+        }
+        const addLogo = () => {
+          tl!.to(logoRule, rule, at)
+          tl!.to(logo, item, at)
+          at += STEP
+        }
+        if (window.matchMedia(TABLET).matches) {
+          addLogo()
+          addMenu()
+        } else {
+          addMenu()
+          addLogo()
+        }
         tl.to(textRule, rule, at)
         addLinesIn(tl, textBlocks, at, { sequence: true })
         at += linesCount(textBlocks) * STEP
