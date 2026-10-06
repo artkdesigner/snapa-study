@@ -7,7 +7,10 @@
   перепрыгивает на следующую строку. Здесь строки берутся из реальной
   раскладки: позиция каждого символа через Range, без вмешательства в переносы.
 
-  Каждая строка оборачивается в маску (overflow: clip). Исходные узлы React
+  Каждая строка оборачивается в маску — обрезает только по вертикали
+  (overflow: visible clip): строки едут вверх-вниз, а по горизонтали глиф
+  может выступать за блок (последняя буква при отрицательном трекинге —
+  «e» в «Phone» у Steps-title), его резать нельзя. Исходные узлы React
   откладываются и возвращаются в revert() — те же самые, не копии.
 */
 export type SplitLinesResult = {
@@ -54,7 +57,7 @@ export function splitLines(el: HTMLElement): SplitLinesResult {
     if (!clean) continue
     const mask = document.createElement('span')
     mask.style.display = 'block'
-    mask.style.overflow = 'clip'
+    mask.style.overflow = 'visible clip'
     const line = document.createElement('span')
     line.style.display = 'block'
     line.textContent = clean
