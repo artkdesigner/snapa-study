@@ -1,5 +1,6 @@
 import { Fragment, useRef } from 'react'
 import { scrollToSection } from '../lib/scrollToSection'
+import { useCoverZoom } from '../lib/useCoverZoom'
 import { useFooterReveal } from '../lib/useFooterReveal'
 import logo from '../assets/logo.svg'
 import bgDesktop from '../assets/footer-desktop.webp'
@@ -46,6 +47,8 @@ const TITLE_WORDS = ['Make', 'Moments', 'Physical']
 function Footer() {
   const rootRef = useRef<HTMLElement>(null)
   useFooterReveal(rootRef)
+  // Пока наезжает на Steps — фото фона уменьшается 110% → 100%.
+  useCoverZoom(rootRef)
 
   return (
     // role: футер стоит внутри <main> (стопка наездов), без него он не
@@ -55,7 +58,7 @@ function Footer() {
       role="contentinfo"
       className="Footer relative z-60 flex min-h-svh flex-col items-center justify-between gap-15 px-2.5 pt-20 pb-5 text-primary md:px-5 md:pt-25 lg:px-7.5 lg:pt-40 lg:pb-7.5"
     >
-      <div aria-hidden className="Footer-bg absolute inset-0">
+      <div aria-hidden className="Footer-bg absolute inset-0 overflow-clip">
         <picture>
           <source media="(min-width: 62rem)" srcSet={bgDesktop} />
           <img
@@ -63,6 +66,7 @@ function Footer() {
             alt=""
             loading="lazy"
             draggable={false}
+            data-cover-zoom
             className="block size-full object-cover lg:object-bottom"
           />
         </picture>
