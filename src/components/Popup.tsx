@@ -14,7 +14,8 @@ import protectiveCase from '../assets/popup-card-case.webp'
 /*
   Попап заказа на весь экран. Шапка (логотип, закрыть) под линией, ниже
   фото камеры и форма. Mobile/Tablet: фото над формой, весь попап
-  прокручивается внутри себя. Desktop: фото слева, форма справа на всю высоту
+  прокручивается внутри себя, шапка прилипает к верху попапа (sticky, свой
+  фон на всю ширину — контент уезжает под неё, линия — по ширине контента). Desktop: фото слева, форма справа на всю высоту
   (верх и низ формы разнесены); если окно ниже макета — тоже прокрутка.
   Форма: камера — одна на выбор (radio, по макету выбран Pearl), аксессуары —
   сколько угодно (checkbox); итог = цена камеры + цены аксессуаров.
@@ -152,31 +153,35 @@ function Popup({ open, onClose }: PopupProps) {
       onClose={onClose}
       className="Popup m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain border-0 bg-bg-primary p-0 text-dark backdrop:bg-transparent"
     >
-      <div className="Popup-inner flex min-h-full flex-col gap-2.5 px-2.5 pt-5 pb-20 md:gap-5 md:px-5 lg:gap-7.5 lg:p-7.5">
-        <div className="Popup-header flex items-center justify-between border-b border-dark/20 pb-5 lg:pb-7.5">
-          <img
-            src={logo}
-            alt="Snapa"
-            draggable={false}
-            className="Popup-logo block h-auto w-[2.3125rem] md:w-[2.6875rem]"
-          />
-          {/* Hover — как у остальных кнопок: 70%, Ease out 300ms (в макете
+      <div className="Popup-inner flex min-h-full flex-col gap-2.5 px-2.5 pb-20 md:gap-5 md:px-5 lg:gap-7.5 lg:p-7.5">
+        {/* Верхний отступ попапа — внутри шапки, чтобы прилипшая шапка
+            сохраняла его */}
+        <div className="Popup-header sticky top-0 z-10 -mx-2.5 bg-bg-primary px-2.5 pt-5 md:-mx-5 md:px-5 lg:static lg:mx-0 lg:px-0 lg:pt-0">
+          <div className="Popup-header-inner flex items-center justify-between border-b border-dark/20 pb-5 lg:pb-7.5">
+            <img
+              src={logo}
+              alt="Snapa"
+              draggable={false}
+              className="Popup-logo block h-auto w-[2.3125rem] md:w-[2.6875rem]"
+            />
+            {/* Hover — как у остальных кнопок: 70%, Ease out 300ms (в макете
               состояния нет) */}
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={onClose}
-            className="Popup-close flex size-7.5 cursor-pointer items-center justify-center rounded-full border border-dark transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70 md:size-10"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="13 13 14 14"
-              className="Popup-close-icon size-3.5"
-              fill="currentColor"
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={onClose}
+              className="Popup-close flex size-7.5 cursor-pointer items-center justify-center rounded-full border border-dark transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70 md:size-10"
             >
-              <path d="M21.0287 19.9841L26.8317 14.1967C26.9464 14.0631 27.0063 13.8913 26.9995 13.7156C26.9927 13.5399 26.9196 13.3732 26.795 13.2489C26.6703 13.1246 26.5032 13.0517 26.327 13.0449C26.1508 13.0382 25.9786 13.0979 25.8447 13.2123L20.0417 18.9998L14.2387 13.2053C14.1069 13.0739 13.9281 13 13.7417 13C13.5553 13 13.3765 13.0739 13.2447 13.2053C13.1129 13.3368 13.0388 13.5151 13.0388 13.701C13.0388 13.8869 13.1129 14.0652 13.2447 14.1967L19.0547 19.9841L13.2447 25.7716C13.1714 25.8342 13.1119 25.9112 13.0699 25.9978C13.0279 26.0844 13.0042 26.1788 13.0005 26.2749C12.9968 26.3711 13.013 26.4669 13.0482 26.5565C13.0834 26.6461 13.1368 26.7275 13.205 26.7955C13.2732 26.8636 13.3548 26.9168 13.4447 26.9519C13.5345 26.987 13.6306 27.0032 13.727 26.9995C13.8234 26.9958 13.918 26.9722 14.0049 26.9303C14.0917 26.8884 14.1689 26.8291 14.2317 26.756L20.0417 20.9685L25.8447 26.756C25.9786 26.8703 26.1508 26.9301 26.327 26.9233C26.5032 26.9165 26.6703 26.8437 26.795 26.7194C26.9196 26.595 26.9927 26.4284 26.9995 26.2527C27.0063 26.077 26.9464 25.9052 26.8317 25.7716L21.0287 19.9841Z" />
-            </svg>
-          </button>
+              <svg
+                aria-hidden="true"
+                viewBox="13 13 14 14"
+                className="Popup-close-icon size-3.5"
+                fill="currentColor"
+              >
+                <path d="M21.0287 19.9841L26.8317 14.1967C26.9464 14.0631 27.0063 13.8913 26.9995 13.7156C26.9927 13.5399 26.9196 13.3732 26.795 13.2489C26.6703 13.1246 26.5032 13.0517 26.327 13.0449C26.1508 13.0382 25.9786 13.0979 25.8447 13.2123L20.0417 18.9998L14.2387 13.2053C14.1069 13.0739 13.9281 13 13.7417 13C13.5553 13 13.3765 13.0739 13.2447 13.2053C13.1129 13.3368 13.0388 13.5151 13.0388 13.701C13.0388 13.8869 13.1129 14.0652 13.2447 14.1967L19.0547 19.9841L13.2447 25.7716C13.1714 25.8342 13.1119 25.9112 13.0699 25.9978C13.0279 26.0844 13.0042 26.1788 13.0005 26.2749C12.9968 26.3711 13.013 26.4669 13.0482 26.5565C13.0834 26.6461 13.1368 26.7275 13.205 26.7955C13.2732 26.8636 13.3548 26.9168 13.4447 26.9519C13.5345 26.987 13.6306 27.0032 13.727 26.9995C13.8234 26.9958 13.918 26.9722 14.0049 26.9303C14.0917 26.8884 14.1689 26.8291 14.2317 26.756L20.0417 20.9685L25.8447 26.756C25.9786 26.8703 26.1508 26.9301 26.327 26.9233C26.5032 26.9165 26.6703 26.8437 26.795 26.7194C26.9196 26.595 26.9927 26.4284 26.9995 26.2527C27.0063 26.077 26.9464 25.9052 26.8317 25.7716L21.0287 19.9841Z" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="Popup-content flex flex-col gap-5 lg:flex-1 lg:flex-row lg:gap-7.5">
