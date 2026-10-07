@@ -1,4 +1,10 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react'
 import gsap from 'gsap'
 import PopupCard from './PopupCard'
 import logo from '../assets/logo-dark.svg'
@@ -21,7 +27,11 @@ import protectiveCase from '../assets/popup-card-case.webp'
   сколько угодно (checkbox); итог = цена камеры + цены аксессуаров.
   Поля доставки: в DOM мобильный порядок (имя, фамилия, телефон, страна,
   город, адрес), на Tablet/Desktop сетка 3×2 — страна/город/адрес в первом
-  ряду.
+  ряду. Все обязательные: браузер не даст отправить с пустым, такое поле
+  после попытки подсвечивается рамкой accent (:user-invalid).
+  Отправка — имитация (сервера у сайта нет): кнопка «Sending…» →
+  «Thank you!», затем форма очищается (выбор — снова Pearl без
+  аксессуаров), попап остаётся открытым.
   <dialog> через showModal(): поверх всего (top layer), страница под ним
   недоступна, фокус внутри, Esc закрывает. Выезжает справа за 1.2s (медленно
   в начале, быстро в середине, плавно тормозит к концу), уезжает обратно вправо за 0.8s по такому же графику; прокрутка страницы на это время остановлена (Lenis, Home),
@@ -32,6 +42,21 @@ const OPEN_DURATION = 1.2
 const OPEN_EASE = 'power3.inOut'
 const CLOSE_DURATION = 0.8
 const CLOSE_EASE = 'power3.inOut'
+
+// Имитация отправки: «отправляется» SENDING_MS, «спасибо» держится THANKS_MS.
+const SENDING_MS = 1000
+const THANKS_MS = 2500
+const BUTTON_TEXT = {
+  idle: 'Order',
+  sending: 'Sending…',
+  sent: 'Thank you!',
+}
+// для экранных дикторов — то же, что на кнопке, но полной фразой
+const STATUS_TEXT = {
+  idle: '',
+  sending: 'Sending your order…',
+  sent: 'Thank you! Your order has been placed.',
+}
 
 const CAMERAS = [
   { id: 'pearl', title: 'Pearl', price: 250, img: pearl },
@@ -93,6 +118,26 @@ function Popup({ open, onClose }: PopupProps) {
   const tweenRef = useRef<gsap.core.Tween | null>(null)
   const [camera, setCamera] = useState(CAMERAS[0].id)
   const [accessories, setAccessories] = useState<string[]>([])
+  const formRef = useRef<HTMLFormElement>(null)
+  const [status, setStatus] = useState<keyof typeof BUTTON_TEXT>('idle')
+  const timersRef = useRef<number[]>([])
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (status !== 'idle') return
+    // Здесь была бы настоящая отправка (fetch на сервер/сервис форм).
+    setStatus('sending')
+    timersRef.current = [
+      window.setTimeout(() => setStatus('sent'), SENDING_MS),
+      window.setTimeout(() => {
+        formRef.current?.reset()
+        setCamera(CAMERAS[0].id)
+        setAccessories([])
+        setStatus('idle')
+      }, SENDING_MS + THANKS_MS),
+    ]
+  }
+  useEffect(() => () => timersRef.current.forEach(clearTimeout), [])
 
   const total =
     (CAMERAS.find(({ id }) => id === camera)?.price ?? 0) +
@@ -198,7 +243,8 @@ function Popup({ open, onClose }: PopupProps) {
           </div>
 
           <form
-            onSubmit={(event) => event.preventDefault()}
+            ref={formRef}
+            onSubmit={handleSubmit}
             className="Popup-form flex flex-col gap-7.5 lg:flex-1 lg:justify-between"
           >
             <div className="Popup-form-top flex flex-col gap-5 md:gap-7.5">
@@ -282,9 +328,10 @@ function Popup({ open, onClose }: PopupProps) {
                       name={name}
                       type={type ?? 'text'}
                       autoComplete={autoComplete}
+                      required
                       placeholder={label}
                       aria-label={label}
-                      className={`Input h-12 w-full min-w-0 bg-dark/2 px-5 text-body text-dark outline-dark placeholder:text-dark/50 focus-visible:outline md:h-[3.4375rem] ${row ?? 'md:row-start-2'}`}
+                      className={`Input h-12 w-full min-w-0 bg-dark/2 px-5 text-body text-dark outline-dark placeholder:text-dark/50 focus-visible:outline user-invalid:outline user-invalid:outline-accent md:h-[3.4375rem] ${row ?? 'md:row-start-2'}`}
                     />
                   ))}
                 </div>
@@ -299,10 +346,14 @@ function Popup({ open, onClose }: PopupProps) {
                 </p>
                 <button
                   type="submit"
-                  className="Button-form flex h-12.5 w-full cursor-pointer items-center justify-center rounded-full bg-dark px-7.5 text-body text-primary transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70 md:h-15 md:w-[20.875rem]"
+                  disabled={status !== 'idle'}
+                  className="Button-form flex h-12.5 w-full cursor-pointer items-center justify-center rounded-full bg-dark px-7.5 text-body text-primary transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] enabled:hover:opacity-70 disabled:cursor-default md:h-15 md:w-[20.875rem]"
                 >
-                  Order
+                  {BUTTON_TEXT[status]}
                 </button>
+                <p role="status" className="sr-only">
+                  {STATUS_TEXT[status]}
+                </p>
               </div>
             </div>
           </form>
