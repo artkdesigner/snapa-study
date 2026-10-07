@@ -124,6 +124,7 @@ function Choose() {
     // Фона у секции нет: в переходе сквозь неё виден Presets.
     <section
       ref={rootRef}
+      id="choose"
       aria-labelledby="choose-title"
       style={HEIGHTS as CSSProperties}
       className="Choose relative z-50 h-(--h) text-primary motion-safe:h-(--h-anim)"

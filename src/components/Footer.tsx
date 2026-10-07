@@ -32,7 +32,7 @@ import bgMobile from '../assets/footer-mobile.webp'
 const MENU = [
   { name: 'Camera', section: 'slider' },
   { name: 'Prints', section: 'bigprint' },
-  { name: 'Presets', section: 'mask' },
+  { name: 'Presets', section: 'choose' },
   { name: 'Mobile App', section: 'steps' },
 ]
 const LINK_BIG =
