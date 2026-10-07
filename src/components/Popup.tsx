@@ -22,11 +22,15 @@ import protectiveCase from '../assets/popup-card-case.webp'
   город, адрес), на Tablet/Desktop сетка 3×2 — страна/город/адрес в первом
   ряду.
   <dialog> через showModal(): поверх всего (top layer), страница под ним
-  недоступна, фокус внутри, Esc закрывает. Выезжает справа за 0.8s и уезжает
-  обратно туда же; прокрутка страницы на это время остановлена (Lenis, Home),
+  недоступна, фокус внутри, Esc закрывает. Выезжает справа за 1.2s с разгоном
+  (медленно в начале, быстрее к концу), уезжает обратно вправо за 0.8s; прокрутка страницы на это время остановлена (Lenis, Home),
   data-lenis-prevent — колесо внутри попапа прокручивает сам попап.
 */
-const SLIDE_DURATION = 0.8
+// Появление: разгон — медленно в начале, быстрее к концу (по просьбе).
+const OPEN_DURATION = 1.2
+const OPEN_EASE = 'power3.in'
+const CLOSE_DURATION = 0.8
+const CLOSE_EASE = 'power3.in'
 
 const CAMERAS = [
   { id: 'pearl', title: 'Pearl', price: 250, img: pearl },
@@ -105,10 +109,9 @@ function Popup({ open, onClose }: PopupProps) {
   useLayoutEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
-    const duration = window.matchMedia('(prefers-reduced-motion: reduce)')
-      .matches
-      ? 0
-      : SLIDE_DURATION
+    const reduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
 
     tweenRef.current?.kill()
     if (open) {
@@ -120,14 +123,14 @@ function Popup({ open, onClose }: PopupProps) {
       }
       tweenRef.current = gsap.to(dialog, {
         xPercent: 0,
-        duration,
-        ease: 'power3.out',
+        duration: reduced ? 0 : OPEN_DURATION,
+        ease: OPEN_EASE,
       })
     } else if (dialog.open) {
       tweenRef.current = gsap.to(dialog, {
         xPercent: 100,
-        duration,
-        ease: 'power3.in',
+        duration: reduced ? 0 : CLOSE_DURATION,
+        ease: CLOSE_EASE,
         onComplete: () => dialog.close(),
       })
     }
