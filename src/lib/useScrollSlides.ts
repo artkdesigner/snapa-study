@@ -9,17 +9,27 @@ gsap.registerPlugin(ScrollTrigger)
 // Тайминги — в макете не заданы, подобраны; крутить здесь.
 const IMAGE_DURATION = 1
 const IMAGE_EASE = 'expo.inOut'
+// Смена началась, пока лента ещё едет (быстрый скролл), — без разгона с
+// нуля, иначе лента притормаживала бы на каждом новом слайде.
+const IMAGE_EASE_MOVING = 'expo.out'
 
 /*
   Секция высотой в N экранов (+ запас в конце), внутри прилипает (sticky)
   .Slider-pin на экран. Первые N−1 экранов прокрутки делятся на N слайдов:
   слайд меняется на 0.5, 1.5, 2.5… экранах; запас после них — последний
-  слайд просто стоит. Смена — анимацией по времени, не скрабом: старая
-  картинка уезжает вверх, новая приезжает снизу (при скролле назад —
-  наоборот), активному пункту списка ставится aria-current — его яркость
-  (и hover остальных) задаёт CSS в Slider.tsx, не GSAP: инлайновый opacity
+  слайд просто стоит. Смена — анимацией по времени, не скрабом.
+  Картинки — одна вертикальная лента встык (картинка i сдвинута на
+  (i − position) × 100%), анимируется только position: старая уезжает
+  вверх, новая приезжает снизу (назад — наоборот). При быстром скролле
+  лента едет сразу к нужному слайду — промежуточные проносятся следом
+  встык, без пустого фона; новая цель посреди движения — лента
+  продолжает ехать с текущего места.
+  Активному пункту списка ставится aria-current — его яркость (и hover
+  остальных) задаёт CSS в Slider.tsx, не GSAP: инлайновый opacity
   перебивал бы hover.
-  Клик по .Slider-list-button перелистывает на слайд своего пункта.
+  Клик по .Slider-list-button перелистывает на слайд своего пункта одной
+  сменой: на время перехода лента — только из двух картинок (текущая и
+  нужная), промежуточные не мелькают.
   Ожидаются .Slider-img и .Slider-list-item внутри rootRef.
 */
 export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
@@ -32,16 +42,32 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
     const count = images.length
     if (!pin || count < 2) return
 
-    const reduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-    const imageTween = {
-      duration: reduced ? 0 : IMAGE_DURATION,
-      ease: IMAGE_EASE,
-      overwrite: true,
-    }
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches
+      ? 0
+      : IMAGE_DURATION
     let current = 0
     let scrollToSlide = (_index: number) => {}
+    // следующая смена — от клика по пункту (одна смена, без промежуточных)
+    let jumpPending = false
+
+    // Лента: порядок картинок и положение в нём (0 — первая в кадре).
+    const fullStrip = images.map((_, i) => i)
+    let strip = fullStrip
+    const position = { value: 0 }
+    let tween: gsap.core.Tween | null = null
+    const setY = images.map((img) => gsap.quickSetter(img, 'yPercent'))
+
+    const render = () => {
+      images.forEach((_, i) => {
+        const k = strip.indexOf(i)
+        // не в ленте (во время клика) — за кадром со стороны своего места
+        const offset = k === -1 ? (i < current ? -1 : 1) : k - position.value
+        setY[i](gsap.utils.clamp(-1, 1, offset) * 100)
+      })
+    }
+    // Картинка, которая сейчас больше всех в кадре.
+    const shownImage = () => strip[Math.round(position.value)]
 
     const markCurrent = (index: number) => {
       items.forEach((item, i) => {
@@ -54,25 +80,43 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
     }
 
     const goTo = (next: number) => {
-      const prev = current
+      const moving = tween?.isActive() ?? false
+      const shown = shownImage()
+      tween?.kill()
       current = next
-      const dir = next > prev ? 1 : -1
-
-      // Пропущенные при быстром скролле — сразу по своим сторонам.
-      images.forEach((img, i) => {
-        if (i === prev || i === next) return
-        gsap.killTweensOf(img)
-        gsap.set(img, { yPercent: i < next ? -100 : 100 })
-      })
-      gsap.to(images[prev], { ...imageTween, yPercent: -100 * dir })
-      // Новая заходит со стороны движения; если она ещё в кадре (смена
-      // направления посреди анимации) — продолжает с текущего места.
-      const nextY = Number(gsap.getProperty(images[next], 'yPercent'))
-      if (Math.abs(nextY) >= 100)
-        gsap.set(images[next], { yPercent: 100 * dir })
-      gsap.to(images[next], { ...imageTween, yPercent: 0 })
-
       markCurrent(next)
+
+      if (jumpPending && shown !== next) {
+        // Клик: лента из двух картинок — текущей и нужной.
+        jumpPending = false
+        strip = shown < next ? [shown, next] : [next, shown]
+        position.value = strip.indexOf(shown)
+        tween = gsap.to(position, {
+          value: strip.indexOf(next),
+          duration,
+          ease: IMAGE_EASE,
+          onUpdate: render,
+          onComplete: () => {
+            strip = fullStrip
+            position.value = next
+            render()
+          },
+        })
+        return
+      }
+      jumpPending = false
+
+      // Скролл: после клика лента снова полная (с той картинки, что в кадре).
+      if (strip !== fullStrip) {
+        strip = fullStrip
+        position.value = shown
+      }
+      tween = gsap.to(position, {
+        value: next,
+        duration,
+        ease: moving ? IMAGE_EASE_MOVING : IMAGE_EASE,
+        onUpdate: render,
+      })
     }
 
     // Сначала пустой контекст, потом ctx.add: ScrollTrigger может вызвать
@@ -84,6 +128,7 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       // Стартовое положение — в yPercent, а не transform из класса (GSAP
       // прочитал бы его как y в px и смешал бы с yPercent).
       gsap.set(images, { y: 0, yPercent: (i) => (i === 0 ? 0 : 100) })
+      render()
       markCurrent(0)
 
       const slides = ScrollTrigger.create({
@@ -105,6 +150,8 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       // мелькания промежуточных.
       scrollToSlide = (index) => {
         const { start, end } = slides
+        // клик по текущему пункту смены не вызовет — флаг не ставить
+        jumpPending = index !== current
         scrollPage(start + ((end - start) * index) / (count - 1), {
           immediate: true,
         })
@@ -128,6 +175,7 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
 
     return () => {
       root.removeEventListener('click', onClick)
+      tween?.kill()
       ctx.revert()
     }
   }, [rootRef])
