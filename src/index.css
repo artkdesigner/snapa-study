@@ -133,6 +133,9 @@
 */
 html {
   font-size: 0.83333vw; /* 16px при 1920px — Desktop */
+  /* Без «резинового» отскока у краёв страницы на тач-устройствах: в конце
+     прокрутки Footer отъезжал вверх и снизу мелькала тёмная полоска фона. */
+  overscroll-behavior-y: none;
 }
 @media screen and (max-width: 61.9375rem) {
   /* ≤991px — Tablet */

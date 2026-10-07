@@ -9,7 +9,9 @@ gsap.registerPlugin(ScrollTrigger)
   Плавный скролл — Lenis поверх нативного (sticky и ScrollTrigger работают
   как обычно). Lenis крутится на тикере GSAP, ScrollTrigger обновляется на
   каждый его шаг — анимации не отстают от сглаженного скролла.
-  Тач-скролл Lenis по умолчанию не сглаживает — на телефонах родная инерция.
+  Тач-скролл тоже сглажен (syncTouch, по просьбе: на планшете родной скролл
+  был заметно резче, чем на десктопе) — после свайпа страница доезжает
+  инерцией Lenis.
   При prefers-reduced-motion не включается.
 
   Прокручивать страницу из кода — только через scrollPage(): прямой
@@ -27,7 +29,7 @@ export function useSmoothScroll(paused = false) {
   useLayoutEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const instance = new Lenis()
+    const instance = new Lenis({ syncTouch: true })
     lenis = instance
     instance.on('scroll', ScrollTrigger.update)
     const raf = (time: number) => instance.raf(time * 1000)
