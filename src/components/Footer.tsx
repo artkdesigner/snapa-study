@@ -20,15 +20,15 @@ import bgMobile from '../assets/footer-mobile.webp'
   соцсети, почта, адрес (src/lib/useFooterReveal.ts); линии над меню,
   логотипом и текстом растут по ширине. Линия — отдельный span поверх
   прозрачной верхней рамки (рамка держит место в раскладке, как в Figma).
-  Слоган — кнопка (откроет Popup). Каждое слово — маска (обрезка только по
+  Слоган — кнопка, открывает попап заказа (как и Order в меню). Каждое слово — маска (обрезка только по
   вертикали, продлена вниз под хвост «y»), буквы в ней — inline-block,
   выезжают снизу.
   Ссылки Footer-link-big (меню) и Footer-link-small (соцсети, почта): Hover
   в Figma — opacity 70%; переход как у Button (Ease out 300ms) —
   длительность из Figma не читается.
 */
-// Пункты меню ведут к секциям (scrollToSection); Order — кнопка, откроет
-// Popup (будет позже).
+// Пункты меню ведут к секциям (scrollToSection); Order — кнопка, открывает
+// попап заказа.
 const MENU = [
   { name: 'Camera', section: 'slider' },
   { name: 'Prints', section: 'bigprint' },
@@ -45,7 +45,12 @@ const SOCIAL = [
 ]
 const TITLE_WORDS = ['Make', 'Moments', 'Physical']
 
-function Footer() {
+type FooterProps = {
+  // слоган и Order в меню — открывают попап заказа
+  onOrder?: () => void
+}
+
+function Footer({ onOrder }: FooterProps) {
   const rootRef = useRef<HTMLElement>(null)
   useFooterReveal(rootRef)
   // Пока наезжает на Steps — фото фона уменьшается 110% → 100%.
@@ -74,11 +79,13 @@ function Footer() {
         <div className="absolute inset-0 bg-linear-to-b from-accent/0 from-50% to-accent/20" />
       </div>
 
-      {/* Кнопка: по клику откроет Popup (будет позже). Hover — как у Button:
+      {/* Кнопка: открывает попап заказа. Hover — как у Button:
           70%, Ease out 300ms. GSAP двигает только буквы внутри, opacity
           самой кнопки не трогает. */}
       <button
         type="button"
+        aria-haspopup="dialog"
+        onClick={onOrder}
         className="Footer-title relative cursor-pointer text-center text-slogan-sm transition-opacity duration-300 ease-[cubic-bezier(0,0,0.58,1)] hover:opacity-70 md:text-slogan-md lg:text-slogan-lg"
       >
         <span className="sr-only">{TITLE_WORDS.join(' ')}</span>
@@ -153,7 +160,12 @@ function Footer() {
               </li>
             ))}
             <li>
-              <button type="button" className={LINK_BIG}>
+              <button
+                type="button"
+                aria-haspopup="dialog"
+                onClick={onOrder}
+                className={LINK_BIG}
+              >
                 <span className="Footer-link-big-text block">Order</span>
               </button>
             </li>

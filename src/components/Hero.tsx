@@ -20,9 +20,11 @@ type HeroProps = {
   // h1 — цель, на которую прелоудер приводит вордмарк
   titleRef?: Ref<HTMLHeadingElement>
   reveal?: HeroReveal
+  // кнопка Order — открывает попап заказа
+  onOrder?: () => void
 }
 
-function Hero({ titleRef, reveal = 'static' }: HeroProps) {
+function Hero({ titleRef, reveal = 'static', onOrder }: HeroProps) {
   const rootRef = useRef<HTMLElement>(null)
   useHeroReveal(rootRef, reveal)
   useCoverOverlay(rootRef)
@@ -58,7 +60,9 @@ function Hero({ titleRef, reveal = 'static' }: HeroProps) {
             className="block h-[1.9375rem] w-[2.5625rem]"
           />
         </a>
-        <Button>Order</Button>
+        <Button aria-haspopup="dialog" onClick={onOrder}>
+          Order
+        </Button>
       </header>
 
       <h1

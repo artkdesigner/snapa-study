@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
 import Mask from '../components/Mask'
+import Popup from '../components/Popup'
 import Preloader from '../components/Preloader'
 import Presets from '../components/Presets'
 import Slider from '../components/Slider'
@@ -23,8 +24,13 @@ function Home() {
     prefersReducedMotion() ? 'static' : 'hidden',
   )
   const handlePreloaderDone = useCallback(() => setHeroReveal('play'), [])
-  // Плавный скролл; пока идёт прелоудер — прокрутка стоит.
-  useSmoothScroll(heroReveal === 'hidden')
+  // Попап заказа: открывают Order в Hero, слоган и Order в Footer.
+  const [orderOpen, setOrderOpen] = useState(false)
+  const openOrder = useCallback(() => setOrderOpen(true), [])
+  const closeOrder = useCallback(() => setOrderOpen(false), [])
+  // Плавный скролл; пока идёт прелоудер или открыт попап — прокрутка
+  // страницы стоит.
+  useSmoothScroll(heroReveal === 'hidden' || orderOpen)
   // После перезагрузки — на то место, где остановились (после Lenis, под
   // прелоудером, до первой отрисовки).
   useLayoutEffect(restoreScroll, [])
@@ -40,7 +46,11 @@ function Home() {
             затемняется своим оверлеем (useCoverOverlay в каждой из них).
             Прилипание ограничено обёрткой — дальше стопка уезжает целиком. */}
         <div className="Cover-stack">
-          <Hero titleRef={heroTitleRef} reveal={heroReveal} />
+          <Hero
+            titleRef={heroTitleRef}
+            reveal={heroReveal}
+            onOrder={openOrder}
+          />
           <Intro />
           <Slider />
           <Mask />
@@ -55,9 +65,10 @@ function Home() {
         <div className="Cover-stack">
           <Presets />
           <Steps />
-          <Footer />
+          <Footer onOrder={openOrder} />
         </div>
       </main>
+      <Popup open={orderOpen} onClose={closeOrder} />
     </>
   )
 }
