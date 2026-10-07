@@ -6,8 +6,10 @@ import { useCoverOverlay } from '../lib/useCoverOverlay'
   Экран-манифест: заголовок и подпись по центру светлого экрана. В Figma
   колонка центрирована по вертикали во фрейме высотой с вьюпорт, поэтому
   здесь — Intro-content min-h-svh + flex-центровка, ширины блоков из макета.
-  Снизу секции — ещё 50svh пустой прокрутки (pb): прилипшая Intro стоит на
-  экране, пока они проматываются, и Slider наезжает не сразу.
+  Снизу секции — ещё пустая прокрутка (pb): прилипшая Intro стоит на
+  экране, пока она проматывается, и Slider наезжает не сразу. Mobile —
+  100svh (по просьбе: с 50svh секция пролетала слишком быстро), Tablet и
+  Desktop — 50svh.
   Наезжает поверх прилипшего Hero (z-10), сама прилипает (sticky), и на неё
   наезжает Slider; Intro-overlay затемняет её по мере накрытия
   (src/lib/useCoverOverlay.ts). Строки обоих текстов выезжают снизу из-под
@@ -22,7 +24,7 @@ function Intro() {
     <section
       ref={rootRef}
       aria-labelledby="intro-title"
-      className="Intro sticky top-0 z-10 bg-bg-primary pb-[50svh] text-center text-accent"
+      className="Intro sticky top-0 z-10 bg-bg-primary pb-[100svh] text-center md:pb-[50svh] text-accent"
     >
       <div className="Intro-content flex min-h-svh flex-col items-center justify-center gap-6 px-2.5 md:gap-10 md:px-0 lg:gap-15">
         <h2
