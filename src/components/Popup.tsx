@@ -23,14 +23,14 @@ import protectiveCase from '../assets/popup-card-case.webp'
   ряду.
   <dialog> через showModal(): поверх всего (top layer), страница под ним
   недоступна, фокус внутри, Esc закрывает. Выезжает справа за 1.2s (медленно
-  в начале, быстро в середине, плавно тормозит к концу), уезжает обратно вправо за 0.8s; прокрутка страницы на это время остановлена (Lenis, Home),
+  в начале, быстро в середине, плавно тормозит к концу), уезжает обратно вправо за 0.8s по такому же графику; прокрутка страницы на это время остановлена (Lenis, Home),
   data-lenis-prevent — колесо внутри попапа прокручивает сам попап.
 */
 // Появление: медленный старт, разгон, торможение к концу (по просьбе).
 const OPEN_DURATION = 1.2
 const OPEN_EASE = 'power3.inOut'
 const CLOSE_DURATION = 0.8
-const CLOSE_EASE = 'power3.in'
+const CLOSE_EASE = 'power3.inOut'
 
 const CAMERAS = [
   { id: 'pearl', title: 'Pearl', price: 250, img: pearl },
