@@ -127,7 +127,17 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
     ctx.add(() => {
       // Стартовое положение — в yPercent, а не transform из класса (GSAP
       // прочитал бы его как y в px и смешал бы с yPercent).
-      gsap.set(images, { y: 0, yPercent: (i) => (i === 0 ? 0 : 100) })
+      // force3D: true — сдвиг всегда translate3d. Ленту двигает
+      // quickSetter, а он рисует как конец твина, где GSAP по умолчанию
+      // (force3D 'auto') ставит 2D translate: картинка не выносится на свой
+      // слой и перерисовывается каждый кадр — на телефонах/планшетах
+      // (исходники 2752px) это давало моргание и пустые кадры. Слой держит
+      // и will-change-transform на .Slider-img (Slider.tsx).
+      gsap.set(images, {
+        y: 0,
+        yPercent: (i: number) => (i === 0 ? 0 : 100),
+        force3D: true,
+      })
       render()
       markCurrent(0)
 
@@ -158,11 +168,17 @@ export function useScrollSlides(rootRef: RefObject<HTMLElement | null>) {
       }
 
       // Картинки под рамкой обрезаны overflow, и ленивая загрузка считает их
-      // невидимыми — грузим все заранее, за экран до секции.
+      // невидимыми — грузим все заранее, за два экрана до секции,
       ScrollTrigger.create({
         start: () => flowTop(root) - window.innerHeight * 2,
         once: true,
-        onEnter: () => images.forEach((img) => (img.loading = 'eager')),
+        // и сразу декодируем: иначе большая картинка декодируется в момент
+        // въезда в кадр и первые кадры её нет (пустой фон)
+        onEnter: () =>
+          images.forEach((img) => {
+            img.loading = 'eager'
+            img.decode().catch(() => {})
+          }),
       })
     })
 

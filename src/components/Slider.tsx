@@ -96,7 +96,7 @@ function Slider() {
                 aria-hidden={i !== 0}
                 loading="lazy"
                 draggable={false}
-                className={`Slider-img absolute inset-0 block size-full object-cover ${i === 0 ? '' : '[transform:translateY(100%)]'}`}
+                className={`Slider-img absolute inset-0 block size-full object-cover will-change-transform ${i === 0 ? '' : '[transform:translateY(100%)]'}`}
               />
             </picture>
           ))}
