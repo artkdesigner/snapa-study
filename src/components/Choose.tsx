@@ -1,6 +1,9 @@
 import { useRef, type CSSProperties } from 'react'
 import circles from '../assets/choose-circles.svg'
-import choose1 from '../assets/choose-1-1024.webp'
+import choose1Xs from '../assets/choose-1-1280.webp'
+import choose1Sm from '../assets/choose-1-1920.webp'
+import choose1Md from '../assets/choose-1-2880.webp'
+import choose1Lg from '../assets/choose-1-3840.webp'
 import choose2Sm from '../assets/choose-2-1280.webp'
 import choose2Lg from '../assets/choose-2-1984.webp'
 import choose3Sm from '../assets/choose-3-1280.webp'
@@ -56,8 +59,13 @@ const SLIDES = [
   {
     id: 'powder-light',
     title: 'Powder Light',
-    images: [[choose1, 1024]],
-    ratio: 1,
+    images: [
+      [choose1Xs, 1280],
+      [choose1Sm, 1920],
+      [choose1Md, 2880],
+      [choose1Lg, 3840],
+    ],
+    ratio: 3840 / 2160,
     alt: 'Teenage padel player reaching for the ball with his racket',
   },
   {

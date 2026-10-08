@@ -4,7 +4,9 @@ import FooterClock from './FooterClock'
 import { useCoverZoom } from '../lib/useCoverZoom'
 import { useFooterReveal } from '../lib/useFooterReveal'
 import logo from '../assets/logo.svg'
-import bgDesktop from '../assets/footer-desktop.webp'
+import bgDesktopSm from '../assets/footer-desktop-1920.webp'
+import bgDesktopMd from '../assets/footer-desktop-2880.webp'
+import bgDesktopLg from '../assets/footer-desktop-3840.webp'
 import bgMobile from '../assets/footer-mobile.webp'
 
 /*
@@ -66,7 +68,13 @@ function Footer({ onOrder }: FooterProps) {
     >
       <div aria-hidden className="Footer-bg absolute inset-0 overflow-clip">
         <picture>
-          <source media="(min-width: 62rem)" srcSet={bgDesktop} />
+          {/* Desktop: кадр 16:9 на весь экран (object-cover) — шире
+              экрана, если экран уже 16:9 */}
+          <source
+            media="(min-width: 62rem)"
+            srcSet={`${bgDesktopSm} 1920w, ${bgDesktopMd} 2880w, ${bgDesktopLg} 3840w`}
+            sizes="max(100vw, 177.78vh)"
+          />
           <img
             src={bgMobile}
             alt=""
