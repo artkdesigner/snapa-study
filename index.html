@@ -12,6 +12,46 @@
       content="Snapa is a modern instant camera with clean design, a high-quality display, large-format prints and creative presets."
     />
     <meta name="theme-color" content="#010d18" />
+    <!-- SEO: адрес с косой чертой на конце — без неё GitHub Pages отвечает
+         редиректом. Абсолютные URL обязательны для canonical и превью. -->
+    <link rel="canonical" href="https://artkdesigner.github.io/snapa-study/" />
+    <!-- Превью ссылки в мессенджерах и соцсетях (public/og-image.jpg —
+         кадр Hero 1200×630, JPEG: WebP понимают не все) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Snapa" />
+    <meta
+      property="og:url"
+      content="https://artkdesigner.github.io/snapa-study/"
+    />
+    <meta property="og:title" content="Snapa — modern instant camera" />
+    <meta
+      property="og:description"
+      content="Snapa is a modern instant camera with clean design, a high-quality display, large-format prints and creative presets."
+    />
+    <meta
+      property="og:image"
+      content="https://artkdesigner.github.io/snapa-study/og-image.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="White Snapa instant camera on rocks in warm light"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Микроразметка: цены на сайте нет, а Product без offers Google
+         считает ошибкой — поэтому WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Snapa",
+        "url": "https://artkdesigner.github.io/snapa-study/",
+        "description": "Snapa is a modern instant camera with clean design, a high-quality display, large-format prints and creative presets.",
+        "inLanguage": "en"
+      }
+    </script>
     <!-- Шрифт первого экрана (заголовок Hero) — качать сразу, а не после
          разбора CSS. Kobzar KS нужен только ниже (Choose), его не трогаем. -->
     <link
@@ -38,6 +78,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Сайт рисует JS; без него (часть поисковых и соцсетевых роботов)
+         страница была бы пустой — хотя бы суть текстом -->
+    <noscript>
+      <div style="padding: 1.25rem; color: #fffdff; font-family: sans-serif">
+        <h1>Snapa — modern instant camera</h1>
+        <p>
+          A modern instant camera with clean design, a high-quality display,
+          large-format prints and creative presets. Enable JavaScript to view
+          the full site.
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
