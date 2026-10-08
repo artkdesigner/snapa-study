@@ -3,12 +3,21 @@ import { useScrollSlides } from '../lib/useScrollSlides'
 import { useScrollItemsReveal } from '../lib/useScrollItemsReveal'
 import { useCoverOverlay } from '../lib/useCoverOverlay'
 import slide1 from '../assets/slider-1.webp'
+import slide1Sm from '../assets/slider-1-1000.webp'
+import slide1Md from '../assets/slider-1-1400.webp'
 import slide2 from '../assets/slider-2.webp'
+import slide2Sm from '../assets/slider-2-1000.webp'
 import slide3 from '../assets/slider-3.webp'
 import slide4 from '../assets/slider-4.webp'
 import slide2Full from '../assets/slider-2-full.webp'
+import slide2FullSm from '../assets/slider-2-full-1536.webp'
+import slide2FullMd from '../assets/slider-2-full-2048.webp'
 import slide3Full from '../assets/slider-3-full.webp'
+import slide3FullSm from '../assets/slider-3-full-1536.webp'
+import slide3FullMd from '../assets/slider-3-full-2048.webp'
 import slide4Full from '../assets/slider-4-full.webp'
+import slide4FullSm from '../assets/slider-4-full-1536.webp'
+import slide4FullMd from '../assets/slider-4-full-2048.webp'
 
 /*
   Характеристики: 4 слайда — картинка + пункт списка. Текущая картинка стоит
@@ -26,29 +35,46 @@ import slide4Full from '../assets/slider-4-full.webp'
   Картинки: на Desktop у слайдов 2–4 свой кадр из Figma (вырезан из
   исходника — `image`), на Mobile/Tablet — исходник целиком (`imageFull`),
   везде object-cover по центру.
+  Размеры для srcset: при object-cover картинка шире рамки, если рамка
+  уже её пропорции, — ширина = max(ширина рамки, высота рамки × пропорция).
+  Desktop: рамка ≈ пол-экрана × весь экран, кадры ≈ 0.9:1 → max(50vw, 90vh).
+  Mobile/Tablet: рамка ≈ весь экран × 65% высоты; исходник 16:9 →
+  max(100vw, 117vh), первый слайд (0.9:1) → max(100vw, 58vh).
 */
+const SIZES_DESKTOP = 'max(50vw, 90vh)'
+const SIZES_FULL = 'max(100vw, 117vh)'
+
 const SLIDES = [
   {
     title: '4-Lens Optical System',
     image: slide1,
+    srcSet: `${slide1Sm} 1000w, ${slide1Md} 1400w, ${slide1} 1830w`,
+    // один кадр на все брейкпоинты
+    sizes: `(min-width: 62rem) ${SIZES_DESKTOP}, max(100vw, 58vh)`,
     alt: 'Close-up of the Snapa zoom lens',
   },
   {
     title: 'Sonar Autofocus',
     image: slide2,
+    srcSet: `${slide2Sm} 1000w, ${slide2} 1362w`,
     imageFull: slide2Full,
+    srcSetFull: `${slide2FullSm} 1536w, ${slide2FullMd} 2048w, ${slide2Full} 2752w`,
     alt: 'Snapa lens barrel with its focus ring',
   },
   {
     title: 'Powerful Integrated Flash',
     image: slide3,
+    srcSet: `${slide3} 975w`,
     imageFull: slide3Full,
+    srcSetFull: `${slide3FullSm} 1536w, ${slide3FullMd} 2048w, ${slide3Full} 2752w`,
     alt: 'Snapa flash window in warm side light',
   },
   {
     title: 'Large-Format Instant Printing',
     image: slide4,
+    srcSet: `${slide4} 1052w`,
     imageFull: slide4Full,
+    srcSetFull: `${slide4FullSm} 1536w, ${slide4FullMd} 2048w, ${slide4Full} 2752w`,
     alt: 'Back of the Snapa camera resting on rocks',
   },
 ]
@@ -88,10 +114,16 @@ function Slider() {
           {SLIDES.map((slide, i) => (
             <picture key={slide.title}>
               {slide.imageFull && (
-                <source media="(min-width: 62rem)" srcSet={slide.image} />
+                <source
+                  media="(min-width: 62rem)"
+                  srcSet={slide.srcSet}
+                  sizes={SIZES_DESKTOP}
+                />
               )}
               <img
                 src={slide.imageFull ?? slide.image}
+                srcSet={slide.srcSetFull ?? slide.srcSet}
+                sizes={slide.imageFull ? SIZES_FULL : slide.sizes}
                 alt={slide.alt}
                 aria-hidden={i !== 0}
                 loading="lazy"

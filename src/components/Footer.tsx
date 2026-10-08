@@ -144,7 +144,9 @@ function Footer({ onOrder }: FooterProps) {
           <ul className="Footer-menu-nav flex flex-col items-start text-heading-sm md:text-heading-md lg:text-heading-lg">
             {/* Hover в Figma — opacity 70% (как Footer-link-small). Появление
                 анимирует текст внутри: инлайн-opacity от GSAP на самой
-                ссылке перебила бы hover. */}
+                ссылке перебила бы hover. До появления текст скрыт
+                (visibility: hidden) и выпадает из дерева доступности —
+                имя ссылкам задаёт aria-label. */}
             {MENU.map(({ name, section }) => (
               <li key={name}>
                 <a
@@ -153,6 +155,7 @@ function Footer({ onOrder }: FooterProps) {
                     event.preventDefault()
                     scrollToSection(section)
                   }}
+                  aria-label={name}
                   className={LINK_BIG}
                 >
                   <span className="Footer-link-big-text block">{name}</span>
@@ -164,6 +167,7 @@ function Footer({ onOrder }: FooterProps) {
                 type="button"
                 aria-haspopup="dialog"
                 onClick={onOrder}
+                aria-label="Order"
                 className={LINK_BIG}
               >
                 <span className="Footer-link-big-text block">Order</span>

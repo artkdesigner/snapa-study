@@ -12,6 +12,15 @@
       content="Snapa is a modern instant camera with clean design, a high-quality display, large-format prints and creative presets."
     />
     <meta name="theme-color" content="#010d18" />
+    <!-- Шрифт первого экрана (заголовок Hero) — качать сразу, а не после
+         разбора CSS. Kobzar KS нужен только ниже (Choose), его не трогаем. -->
+    <link
+      rel="preload"
+      href="/src/assets/fonts/GeneralSans-Medium.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <!-- Фон прелоудера (--color-dark) с первого кадра: index.css приходит
          позже (в dev — только после запуска JS), без этого мелькает белый. -->
     <style>
