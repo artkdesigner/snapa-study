@@ -109,12 +109,17 @@ snapa-study/
   проектами). Dev-сервер живёт на VPS, пользователь смотрит через SSH-туннель
   со своей машины:
   `ssh -N -L 5180:127.0.0.1:5180 -p 2222 root@72.56.97.73`
+- Основной сайт — `https://snapa.art-kalinin-design.ru/` на этом VPS (Caddy,
+  блок в `/etc/caddy/Caddyfile`, файлы в `/var/www/snapa`). Выкладка —
+  `./scripts/deploy-vps.sh` (сборка + замена папки), от git-пуша не зависит.
 - Репозиторий: `github.com/artkdesigner/snapa-study`, ветка `main`. Каждый пуш в
-  `main` собирает и выкладывает сайт на GitHub Pages
-  (`.github/workflows/deploy.yml`) → `https://artkdesigner.github.io/snapa-study/`.
-- `vite.config.ts`: `base` = `/` в dev и `/snapa-study/` только в прод-сборке —
-  поэтому пути к ассетам в коде писать через импорт или `import.meta.env.BASE_URL`,
-  не абсолютными `/...`, иначе на Pages они сломаются.
+  `main` собирает и выкладывает копию на GitHub Pages
+  (`.github/workflows/deploy.yml`) → `https://artkdesigner.github.io/snapa-study/`;
+  её canonical указывает на основной сайт.
+- `vite.config.ts`: `base` = `/` (dev и основной сайт), `/snapa-study/` — только
+  в сборке для Pages (`BASE_PATH` в deploy.yml) — поэтому пути к ассетам в коде
+  писать через импорт или `import.meta.env.BASE_URL`, не абсолютными `/...`,
+  иначе на Pages они сломаются.
 - После пуша проверять, что деплой реально прошёл: `gh run list -L 3`.
 
 ## Безопасность, ревью и эксплуатация

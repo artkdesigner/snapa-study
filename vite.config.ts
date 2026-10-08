@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
-  // localhost (`npm run dev`) — с корня; прод-сборка — под GitHub Pages
-  base: command === 'build' ? '/snapa-study/' : '/',
+export default defineConfig(() => ({
+  // с корня: localhost и основной сайт snapa.art-kalinin-design.ru;
+  // копия на GitHub Pages собирается с BASE_PATH=/snapa-study/ (deploy.yml)
+  base: process.env.BASE_PATH || '/',
   plugins: [react(), tailwindcss()],
   // библиотеки (React, GSAP, Lenis) — отдельным чанком: меняются редко,
   // и после деплоя браузер перекачивает только код сайта
