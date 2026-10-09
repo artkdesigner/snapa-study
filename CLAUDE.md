@@ -1,6 +1,6 @@
 # Snapa (учебный)
 
-Учебный проект Snapa — вёрстка с нуля по макетам Figma, в `~/projects/snapa-study/`.
+Учебный проект Snapa — вёрстка с нуля по макетам Figma, в `~/projects/snapa/`.
 Задача агента — превращать выбранный в Figma фрейм в рабочий React-компонент,
 максимально близкий к макету.
 
@@ -92,7 +92,7 @@ Feature-cards (anim: fade-up; stagger: 80; distance: 32)
 ## Структура
 
 ```
-snapa-study/
+snapa/
   src/
     components/   переиспользуемые UI-компоненты
     pages/        сборка компонентов в страницы
@@ -112,11 +112,11 @@ snapa-study/
 - Основной сайт — `https://snapa.art-kalinin-design.ru/` на этом VPS (Caddy,
   блок в `/etc/caddy/Caddyfile`, файлы в `/var/www/snapa`). Выкладка —
   `./scripts/deploy-vps.sh` (сборка + замена папки), от git-пуша не зависит.
-- Репозиторий: `github.com/artkdesigner/snapa-study`, ветка `main`. Каждый пуш в
+- Репозиторий: `github.com/artkdesigner/snapa`, ветка `main`. Каждый пуш в
   `main` собирает и выкладывает копию на GitHub Pages
-  (`.github/workflows/deploy.yml`) → `https://artkdesigner.github.io/snapa-study/`;
+  (`.github/workflows/deploy.yml`) → `https://artkdesigner.github.io/snapa/`;
   её canonical указывает на основной сайт.
-- `vite.config.ts`: `base` = `/` (dev и основной сайт), `/snapa-study/` — только
+- `vite.config.ts`: `base` = `/` (dev и основной сайт), `/snapa/` — только
   в сборке для Pages (`BASE_PATH` в deploy.yml) — поэтому пути к ассетам в коде
   писать через импорт или `import.meta.env.BASE_URL`, не абсолютными `/...`,
   иначе на Pages они сломаются.
